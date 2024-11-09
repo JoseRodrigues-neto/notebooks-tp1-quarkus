@@ -23,6 +23,12 @@ public class FuncionarioResource {
     }
 
     @GET
+    @Path("/search/{nome}")
+    public List<FuncionarioResponseDTO> findByName(@QueryParam("name") String name) {
+        return funcionarioService.findByName(name);
+    }
+
+    @GET
     @Path("/{id}")
     public FuncionarioResponseDTO findById(@PathParam("id") Long id) {
         return funcionarioService.findById(id);

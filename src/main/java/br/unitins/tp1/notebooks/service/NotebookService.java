@@ -10,6 +10,7 @@ public interface NotebookService {
     NotebookResponseDTO create(NotebookRequestDTO notebookRequestDTO);
     NotebookResponseDTO update(Long id, NotebookRequestDTO notebookRequestDTO);
     void delete(Long id);
+    List<NotebookResponseDTO> findByModelo(String modelo);
     NotebookResponseDTO findById(Long id);
     List<NotebookResponseDTO> findAll();
 }

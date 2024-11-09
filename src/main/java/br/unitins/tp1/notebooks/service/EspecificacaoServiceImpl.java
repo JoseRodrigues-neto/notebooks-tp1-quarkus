@@ -80,4 +80,13 @@ public class EspecificacaoServiceImpl implements EspecificacaoService {
                 especificacao.getPeso()
         );
     }
+   
+    @Override
+public List<EspecificacaoResponseDTO> findByProcessador(String processador) {
+    return especificacaoRepository.findByProcessador(processador).stream()
+            .map(this::toResponseDTO)
+            .collect(Collectors.toList());
+}
+
+    
 }

@@ -4,12 +4,11 @@ import jakarta.persistence.*;
  
 
 @Entity
-public class Notebook {
+public class Notebook  {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     private String modelo;
     private Double preco;
     private Integer garantia;
@@ -26,6 +25,22 @@ public class Notebook {
 
     @ManyToOne
     private Categoria categoria;
+   
+
+    public Notebook(){}
+    
+
+    public Notebook(Long id, String modelo, Double preco, Integer garantia, Fabricante fabricante,
+            Especificacao especificacao, Cor cor, Categoria categoria) {
+        this.id = id;
+        this.modelo = modelo;
+        this.preco = preco;
+        this.garantia = garantia;
+        this.fabricante = fabricante;
+        this.especificacao = especificacao;
+        this.cor = cor;
+        this.categoria = categoria;
+    }
 
     // Getters e Setters
     public Long getId() {

@@ -8,6 +8,7 @@ public interface EspecificacaoService {
 
     EspecificacaoResponseDTO create(EspecificacaoRequestDTO especificacaoRequestDTO);
     EspecificacaoResponseDTO update(Long id, EspecificacaoRequestDTO especificacaoRequestDTO);
+    List<EspecificacaoResponseDTO> findByProcessador(String processador);
     void delete(Long id);
     EspecificacaoResponseDTO findById(Long id);
     List<EspecificacaoResponseDTO> findAll();

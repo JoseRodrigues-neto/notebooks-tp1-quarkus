@@ -7,7 +7,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.OneToOne;
 
 @Entity
-public class Funcionario {
+public class Funcionario extends Usuario {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

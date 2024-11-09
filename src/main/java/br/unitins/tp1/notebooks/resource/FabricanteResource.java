@@ -4,16 +4,9 @@ import br.unitins.tp1.notebooks.dto.FabricanteRequestDTO;
 import br.unitins.tp1.notebooks.dto.FabricanteResponseDTO;
 import br.unitins.tp1.notebooks.service.FabricanteService;
 import jakarta.inject.Inject;
-import jakarta.ws.rs.Consumes;
-import jakarta.ws.rs.GET;
-import jakarta.ws.rs.POST;
-import jakarta.ws.rs.PUT;
-import jakarta.ws.rs.DELETE;
-import jakarta.ws.rs.Path;
-import jakarta.ws.rs.PathParam;
+import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
-import jakarta.ws.rs.Produces;
 import java.util.List;
 
 @Path("/fabricantes")
@@ -25,33 +18,39 @@ public class FabricanteResource {
     FabricanteService service;
 
     @GET
-    public List<FabricanteResponseDTO> listar() {
-        return service.listar();
+    public List<FabricanteResponseDTO> listAll() {
+        return service.listAll();
     }
 
     @GET
     @Path("/{id}")
-    public FabricanteResponseDTO buscarPorId(@PathParam("id") Long id) {
-        return service.buscarPorId(id);
+    public FabricanteResponseDTO findById(@PathParam("id") Long id) {
+        return service.findById(id);
+    }
+
+    @GET
+    @Path("/search/{nome}")
+    public List<FabricanteResponseDTO> findByNome(@QueryParam("nome") String nome) {
+        return service.findByNome(nome);
     }
 
     @POST
-    public Response salvar(FabricanteRequestDTO fabricante) {
-        service.salvar(fabricante);
+    public Response create(FabricanteRequestDTO fabricante) {
+        service.create(fabricante);
         return Response.status(Response.Status.CREATED).build();
     }
 
     @PUT
     @Path("/{id}")
-    public Response atualizar(@PathParam("id") Long id, FabricanteRequestDTO fabricante) {
-        service.atualizar(id, fabricante);
+    public Response update (@PathParam("id") Long id, FabricanteRequestDTO fabricante) {
+        service.update(id, fabricante);
         return Response.ok().build();
     }
 
     @DELETE
     @Path("/{id}")
-    public Response remover(@PathParam("id") Long id) {
-        service.remover(id);
+    public Response delete(@PathParam("id") Long id) {
+        service.delete(id);
         return Response.noContent().build();
     }
 }

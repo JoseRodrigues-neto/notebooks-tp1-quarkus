@@ -10,7 +10,6 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
-
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -32,18 +31,27 @@ public class ClienteServiceImpl implements ClienteService {
                 clienteDTO.usuario().getSenha()
         );
         usuarioRepository.persist(usuario);
-    
-        Cliente cliente = new Cliente(clienteDTO.cpf(), usuario);
+
+        Cliente cliente = new Cliente(
+                clienteDTO.cpf(), 
+                usuario, 
+                clienteDTO.telefone(), 
+                clienteDTO.endereco(), 
+                clienteDTO.dataNascimento()
+        );
         clienteRepository.persist(cliente);
-    
+
         return new ClienteResponseDTO(
                 cliente.getId(),
                 cliente.getCpf(),  
                 usuario.getNome(),  
-                usuario.getEmail()  
+                usuario.getEmail(),
+                cliente.getTelefone(),
+                cliente.getEndereco(),
+                cliente.getDataNascimento()
         );
     }
-    
+
     @Override
     public ClienteResponseDTO findById(Long id) {
         Cliente cliente = clienteRepository.findById(id);
@@ -55,7 +63,10 @@ public class ClienteServiceImpl implements ClienteService {
                 cliente.getId(),
                 cliente.getCpf(),
                 cliente.getUsuario().getNome(),
-                cliente.getUsuario().getEmail()
+                cliente.getUsuario().getEmail(),
+                cliente.getTelefone(),
+                cliente.getEndereco(),
+                cliente.getDataNascimento()
         );
     }
 
@@ -65,6 +76,9 @@ public class ClienteServiceImpl implements ClienteService {
         Cliente cliente = clienteRepository.findById(id);
         if (cliente != null) {
             cliente.setCpf(clienteDTO.cpf());
+            cliente.setTelefone(clienteDTO.telefone());
+            cliente.setEndereco(clienteDTO.endereco());
+            cliente.setDataNascimento(clienteDTO.dataNascimento());
 
             Usuario usuario = cliente.getUsuario();
             if (usuario != null) {
@@ -95,7 +109,24 @@ public class ClienteServiceImpl implements ClienteService {
                         cliente.getId(),
                         cliente.getCpf(),
                         cliente.getUsuario().getNome(),
-                        cliente.getUsuario().getEmail()))
+                        cliente.getUsuario().getEmail(),
+                        cliente.getTelefone(),
+                        cliente.getEndereco(),
+                        cliente.getDataNascimento()))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<ClienteResponseDTO> findByNome(String nome) {
+        return clienteRepository.findByNome(nome).stream()
+                .map(cliente -> new ClienteResponseDTO(
+                        cliente.getId(),
+                        cliente.getCpf(),
+                        cliente.getUsuario().getNome(),
+                        cliente.getUsuario().getEmail(),
+                        cliente.getTelefone(),
+                        cliente.getEndereco(),
+                        cliente.getDataNascimento()))
                 .collect(Collectors.toList());
     }
 }

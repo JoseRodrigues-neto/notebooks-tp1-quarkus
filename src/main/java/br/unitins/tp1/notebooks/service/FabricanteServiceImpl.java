@@ -17,26 +17,26 @@ public class FabricanteServiceImpl implements FabricanteService {
    FabricanteRepository repository;
 
    @Override
-   public List<FabricanteResponseDTO> listar() {
+   public List<FabricanteResponseDTO> listAll() {
        return repository.listAll().stream().map(this::toResponseDTO).collect(Collectors.toList());
    }
 
    @Override
-   public FabricanteResponseDTO buscarPorId(Long id) {
+   public FabricanteResponseDTO findById(Long id) {
        Fabricante fabricante = repository.findById(id);
        return fabricante != null ? toResponseDTO(fabricante) : null;
    }
 
    @Override
    @Transactional
-   public void salvar(FabricanteRequestDTO dto) {
+   public void create(FabricanteRequestDTO dto) {
        Fabricante fabricante = fromRequestDTO(dto);
        repository.persist(fabricante);
    }
 
    @Override
    @Transactional
-   public void atualizar(Long id, FabricanteRequestDTO dto) {
+   public void update(Long id, FabricanteRequestDTO dto) {
        Fabricante existente = repository.findById(id);
        if (existente != null) {
            existente.setNome(dto.nome());
@@ -47,11 +47,10 @@ public class FabricanteServiceImpl implements FabricanteService {
 
    @Override
    @Transactional
-   public void remover(Long id) {
+   public void delete(Long id) {
        repository.deleteById(id);
    }
 
-  
    private FabricanteResponseDTO toResponseDTO(Fabricante fabricante) {
        return new FabricanteResponseDTO(fabricante.getId(), fabricante.getNome(), fabricante.getPaisOrigem());
    }
@@ -62,4 +61,12 @@ public class FabricanteServiceImpl implements FabricanteService {
        fabricante.setPaisOrigem(dto.paisOrigem());
        return fabricante;
    }
+
+   @Override
+public List<FabricanteResponseDTO> findByNome(String nome) {
+    return repository.findByNome(nome).stream()
+            .map(this::toResponseDTO)
+            .collect(Collectors.toList());
+}
+
 }

@@ -9,6 +9,7 @@ public interface UsuarioService {
     UsuarioResponseDTO buscarUsuario(Long id); 
     void update(Long id, UsuarioRequestDTO dto); 
     void delete(Long id);  
+    List<UsuarioResponseDTO> findByName(String nome);
     List<UsuarioResponseDTO> listAll();  
     UsuarioResponseDTO findById(Long id);
     

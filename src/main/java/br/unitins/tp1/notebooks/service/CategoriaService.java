@@ -10,6 +10,8 @@ public interface CategoriaService {
     CategoriaResponseDTO create(CategoriaRequestDTO categoriaRequestDTO);
     CategoriaResponseDTO update(Long id, CategoriaRequestDTO categoriaRequestDTO);
     void delete(Long id);
+    
     CategoriaResponseDTO findById(Long id);
     List<CategoriaResponseDTO> findAll();
+    List<CategoriaResponseDTO> findByNome(String nome);
 }

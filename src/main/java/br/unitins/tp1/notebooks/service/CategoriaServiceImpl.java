@@ -48,6 +48,17 @@ public class CategoriaServiceImpl implements CategoriaService {
         }
     }
 
+
+
+    @Override
+    public List<CategoriaResponseDTO> findByNome(String nome) {
+        return categoriaRepository.findByNome(nome)
+                .stream()
+                .map(CategoriaResponseDTO::valueOf)
+                .collect(Collectors.toList());
+    }
+
+
     @Override
     public CategoriaResponseDTO findById(Long id) {
         Categoria categoria = categoriaRepository.findById(id);

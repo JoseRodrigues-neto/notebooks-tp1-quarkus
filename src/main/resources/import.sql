@@ -5,5 +5,12 @@
 -- insert into myentity (id, field) values(3, 'field-3');
 -- alter sequence myentity_seq restart with 4;
 
+INSERT INTO fabricante (nome,paisOrigem) VALUES ('Dell','EUA');
+INSERT INTO fabricante (nome) VALUES ('Lenovo','CHINA');
+
+ 
+INSERT INTO categoria (nome, descricao) 
+VALUES ('Laptops', 'Computadores portáteis projetados para serem transportados com facilidade. Incluem modelos variados com diferentes tamanhos de tela, capacidades de processamento e recursos.');
+INSERT INTO categoria (nome,descricao) VALUES ('Ultrabooks''ultrafinos e leves, projetados para oferecer alto desempenho e longa duração de bateria.');
  
  

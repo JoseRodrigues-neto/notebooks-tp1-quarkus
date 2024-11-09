@@ -43,4 +43,10 @@ public class NotebookResource {
     public List<NotebookResponseDTO> findAll() {
         return notebookService.findAll();
     }
+
+    @GET
+    @Path("/search")
+    public List<NotebookResponseDTO> findByModelo(@QueryParam("modelo") String modelo) {
+        return notebookService.findByModelo(modelo);
+    }
 }

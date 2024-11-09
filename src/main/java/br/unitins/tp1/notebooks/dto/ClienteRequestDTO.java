@@ -1,4 +1,12 @@
 package br.unitins.tp1.notebooks.dto;
 
-public record ClienteRequestDTO(String cpf, UsuarioRequestDTO usuario) {
+import java.time.LocalDate;
+
+public record ClienteRequestDTO(
+    String cpf, 
+    String telefone, 
+    String endereco, 
+    LocalDate dataNascimento, 
+    UsuarioRequestDTO usuario
+) {
 }

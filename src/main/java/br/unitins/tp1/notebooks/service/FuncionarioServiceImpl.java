@@ -112,5 +112,18 @@ public class FuncionarioServiceImpl implements FuncionarioService {
                 .toList();
     }
     
-    
+    @Override
+public List<FuncionarioResponseDTO> findByName(String name) {
+    List<Funcionario> funcionarios = funcionarioRepository.findByName(name);
+    return funcionarios.stream()
+            .map(f -> new FuncionarioResponseDTO(
+                    f.getId(),
+                    f.getUsuario().getNome(),
+                    f.getUsuario().getEmail(),
+                    f.getMatricula(),
+                    f.getCargo()
+            ))
+            .toList();
+}
+
 }

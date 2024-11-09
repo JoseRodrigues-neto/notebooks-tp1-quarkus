@@ -7,13 +7,10 @@ import java.util.List;
 
 public interface FabricanteService {
 
-    List<FabricanteResponseDTO> listar();
-
-    FabricanteResponseDTO buscarPorId(Long id);
-
-    void salvar(FabricanteRequestDTO dto);
-
-    void atualizar(Long id, FabricanteRequestDTO dto);
-
-    void remover(Long id);
+    List<FabricanteResponseDTO> listAll();
+    FabricanteResponseDTO findById(Long id);
+    void create(FabricanteRequestDTO dto);
+    void update(Long id, FabricanteRequestDTO dto);
+    void delete(Long id);
+    List<FabricanteResponseDTO> findByNome(String nome);
 }

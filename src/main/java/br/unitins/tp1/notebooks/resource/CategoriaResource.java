@@ -1,5 +1,4 @@
 package br.unitins.tp1.notebooks.resource;
- 
 
 import br.unitins.tp1.notebooks.dto.CategoriaRequestDTO;
 import br.unitins.tp1.notebooks.dto.CategoriaResponseDTO;
@@ -7,6 +6,8 @@ import br.unitins.tp1.notebooks.service.CategoriaService;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
+
 import java.util.List;
 
 @Path("/categorias")
@@ -32,6 +33,13 @@ public class CategoriaResource {
     @Path("/{id}")
     public void delete(@PathParam("id") Long id) {
         categoriaService.delete(id);
+    }
+
+    @GET
+    @Path("/search/{nome}")
+    public Response findByNome(@PathParam("nome") String nome) {
+        List<CategoriaResponseDTO> categorias = categoriaService.findByNome(nome);
+        return Response.ok(categorias).build();
     }
 
     @GET

@@ -22,39 +22,38 @@ public class UsuarioServiceTest {
     @Test
     @Transactional
     public void testCreateUsuario() {
+        // Criação de um novo UsuarioRequestDTO usando o record
+        UsuarioRequestDTO usuarioDTO = new UsuarioRequestDTO("João", "joao@example.com", "senha123");
 
-        UsuarioRequestDTO usuarioDTO = new UsuarioRequestDTO();
-        usuarioDTO.setNome("João");
-        usuarioDTO.setEmail("joao@example.com");
-        usuarioDTO.setSenha("senha123");
-
+        // Criação do usuário no serviço e recebimento do UsuarioResponseDTO
         UsuarioResponseDTO usuarioCriado = usuarioService.create(usuarioDTO);
 
+        // Verificações
         Assertions.assertNotNull(usuarioCriado);
-        Assertions.assertEquals("João", usuarioCriado.getNome());
-        Assertions.assertEquals("joao@example.com", usuarioCriado.getEmail());
+        Assertions.assertEquals("João", usuarioCriado.nome());
+        Assertions.assertEquals("joao@example.com", usuarioCriado.email());
 
-        UsuarioResponseDTO usuarioBuscado = usuarioService.findById(usuarioCriado.getId());
+        // Busca pelo ID do usuário criado e validação das informações
+        UsuarioResponseDTO usuarioBuscado = usuarioService.findById(usuarioCriado.id());
         Assertions.assertNotNull(usuarioBuscado);
-        Assertions.assertEquals("João", usuarioBuscado.getNome());
-        Assertions.assertEquals("joao@example.com", usuarioBuscado.getEmail());
+        Assertions.assertEquals("João", usuarioBuscado.nome());
+        Assertions.assertEquals("joao@example.com", usuarioBuscado.email());
     }
 
     @Test
     @Transactional
     public void testFindById() {
+        // Criação de um novo UsuarioRequestDTO para teste
+        UsuarioRequestDTO usuarioDTO = new UsuarioRequestDTO("Maria", "maria@example.com", "senha456");
 
-        UsuarioRequestDTO usuarioDTO = new UsuarioRequestDTO();
-        usuarioDTO.setNome("Maria");
-        usuarioDTO.setEmail("maria@example.com");
-        usuarioDTO.setSenha("senha456");
-
+        // Criação do usuário no serviço
         UsuarioResponseDTO usuarioCriado = usuarioService.create(usuarioDTO);
 
-        UsuarioResponseDTO usuarioBuscado = usuarioService.findById(usuarioCriado.getId());
+        // Busca pelo ID do usuário e validação das informações
+        UsuarioResponseDTO usuarioBuscado = usuarioService.findById(usuarioCriado.id());
 
         Assertions.assertNotNull(usuarioBuscado);
-        Assertions.assertEquals("Maria", usuarioBuscado.getNome());
-        Assertions.assertEquals("maria@example.com", usuarioBuscado.getEmail());
+        Assertions.assertEquals("Maria", usuarioBuscado.nome());
+        Assertions.assertEquals("maria@example.com", usuarioBuscado.email());
     }
 }

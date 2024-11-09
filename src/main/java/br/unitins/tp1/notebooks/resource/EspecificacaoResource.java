@@ -45,4 +45,11 @@ public class EspecificacaoResource {
     public List<EspecificacaoResponseDTO> findAll() {
         return especificacaoService.findAll();
     }
+   
+    @GET
+    @Path("/search/processador/{nome}")
+    public List<EspecificacaoResponseDTO> findByProcessador(@PathParam("nome") String nome) {
+        return especificacaoService.findByProcessador(nome);
+    }
+ 
 }

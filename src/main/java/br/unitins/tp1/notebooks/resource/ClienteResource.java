@@ -34,6 +34,12 @@ public class ClienteResource {
         return Response.status(Response.Status.CREATED).entity(createdCliente).build();
     }
 
+    @GET
+    @Path("/search/{nome}")
+    public List<ClienteResponseDTO> findByNome(@PathParam("nome") String nome) {
+        return clienteService.findByNome(nome);
+    }
+
   @PUT
 @Path("/{id}")
 public Response update(@PathParam("id") Long id, ClienteRequestDTO clienteDTO) {

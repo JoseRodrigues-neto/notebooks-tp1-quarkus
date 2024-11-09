@@ -10,4 +10,5 @@ public interface FuncionarioService {
     void update(Long id, FuncionarioRequestDTO funcionarioDTO);
     void delete(Long id);
     List<FuncionarioResponseDTO> listAll(); 
+    List<FuncionarioResponseDTO> findByName(String name);
 }
