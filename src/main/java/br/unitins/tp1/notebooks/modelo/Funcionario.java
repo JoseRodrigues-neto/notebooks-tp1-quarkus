@@ -1,42 +1,23 @@
 package br.unitins.tp1.notebooks.modelo;
 
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+
 import jakarta.persistence.OneToOne;
+import jakarta.persistence.Column;
+import jakarta.persistence.JoinColumn;
+ 
 
 @Entity
-public class Funcionario extends Usuario {
+public class Funcionario extends DefaultEntity {
+ 
+    @Column(nullable = false, unique = true)
+    private String matricula;
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id; 
-    private String matricula;  
-    private String cargo;  
+    private String cargo;
 
     @OneToOne
-    private Usuario usuario;  
-
-
-    public Funcionario() {
-    }
-
-    
-    public Funcionario(String matricula, String cargo, Usuario usuario) {
-        this.matricula = matricula;
-        this.cargo = cargo;
-        this.usuario = usuario;
-    }
-
-    // Getters e Setters
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
+    @JoinColumn(name = "usuario", nullable = false)
+    private Usuario usuario;
 
     public String getMatricula() {
         return matricula;

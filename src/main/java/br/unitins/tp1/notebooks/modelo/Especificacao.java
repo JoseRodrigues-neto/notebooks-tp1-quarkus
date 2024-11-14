@@ -1,18 +1,11 @@
 package br.unitins.tp1.notebooks.modelo;
  
-
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
 
 @Entity
-public class Especificacao {
+public class Especificacao extends DefaultEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
+ 
     private String processador;
     private String memoriaRam;
     private String armazenamento;
@@ -20,14 +13,6 @@ public class Especificacao {
     private String bateria;
     private Double peso;
 
-    // Getters e Setters
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
 
     public String getProcessador() {
         return processador;

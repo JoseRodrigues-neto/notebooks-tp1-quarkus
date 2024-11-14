@@ -3,15 +3,16 @@ package br.unitins.tp1.notebooks.service;
 import br.unitins.tp1.notebooks.dto.ClienteRequestDTO;
 import br.unitins.tp1.notebooks.dto.ClienteResponseDTO;
 import br.unitins.tp1.notebooks.modelo.Cliente;
+import br.unitins.tp1.notebooks.modelo.Perfil;
 import br.unitins.tp1.notebooks.modelo.Usuario;
+import br.unitins.tp1.notebooks.service.HashServiceImpl;
 import br.unitins.tp1.notebooks.repository.ClienteRepository;
 import br.unitins.tp1.notebooks.repository.UsuarioRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
+
 import java.util.List;
-import java.util.stream.Collectors;
 
 @ApplicationScoped
 public class ClienteServiceImpl implements ClienteService {
@@ -22,111 +23,96 @@ public class ClienteServiceImpl implements ClienteService {
     @Inject
     UsuarioRepository usuarioRepository;
 
+    @Inject
+   HashService hashService;
+
     @Override
     @Transactional
-    public ClienteResponseDTO create(ClienteRequestDTO clienteDTO) {
-        Usuario usuario = new Usuario(
-                clienteDTO.usuario().getNome(),
-                clienteDTO.usuario().getEmail(),
-                clienteDTO.usuario().getSenha()
-        );
+    public Cliente create(ClienteRequestDTO clienteDTO) {
+        // Criar um novo Usuario e setar os atributos
+        Usuario usuario = new Usuario();
+        usuario.setUsername(clienteDTO.username());
+        usuario.setNome(clienteDTO.nome());
+        usuario.setEmail(clienteDTO.email());
+        
+         usuario.setPerfil(Perfil.USER);
+        // Realizar o hash da senha antes de persistir
+        String senhaHash = hashService.getHashSenha(clienteDTO.senha());
+        usuario.setSenha(senhaHash); // Agora a senha está hashada
+    
+        // Persistir o Usuario no banco de dados primeiro
         usuarioRepository.persist(usuario);
-
-        Cliente cliente = new Cliente(
-                clienteDTO.cpf(), 
-                usuario, 
-                clienteDTO.telefone(), 
-                clienteDTO.endereco(), 
-                clienteDTO.dataNascimento()
-        );
+    
+        // Criar o Cliente e associar o Usuario a ele
+        Cliente cliente = new Cliente();
+        cliente.setCpf(clienteDTO.cpf());
+        cliente.setTelefone(clienteDTO.telefone());
+        cliente.setEndereco(clienteDTO.endereco());
+        cliente.setDataNascimento(clienteDTO.dataNascimento());
+        cliente.setUsuario(usuario); // Associar o Usuario ao Cliente
+    
+        // Persistir o Cliente no banco de dados
         clienteRepository.persist(cliente);
-
-        return new ClienteResponseDTO(
-                cliente.getId(),
-                cliente.getCpf(),  
-                usuario.getNome(),  
-                usuario.getEmail(),
-                cliente.getTelefone(),
-                cliente.getEndereco(),
-                cliente.getDataNascimento()
-        );
+    
+        // Retornar o cliente recém-criado
+        return cliente;
     }
+    
+    
 
     @Override
     public ClienteResponseDTO findById(Long id) {
+        // Buscar o cliente pelo id
         Cliente cliente = clienteRepository.findById(id);
-        if (cliente == null) {
-            return null;  
+        if (cliente != null) {
+            return ClienteResponseDTO.valueOf(cliente);
         }
-
-        return new ClienteResponseDTO(
-                cliente.getId(),
-                cliente.getCpf(),
-                cliente.getUsuario().getNome(),
-                cliente.getUsuario().getEmail(),
-                cliente.getTelefone(),
-                cliente.getEndereco(),
-                cliente.getDataNascimento()
-        );
+        return null; // Ou lançar uma exceção personalizada
     }
 
     @Override
     @Transactional
     public void update(Long id, ClienteRequestDTO clienteDTO) {
+        // Buscar o cliente pelo id
         Cliente cliente = clienteRepository.findById(id);
         if (cliente != null) {
+            // Atualizar os dados do cliente
             cliente.setCpf(clienteDTO.cpf());
             cliente.setTelefone(clienteDTO.telefone());
             cliente.setEndereco(clienteDTO.endereco());
             cliente.setDataNascimento(clienteDTO.dataNascimento());
-
-            Usuario usuario = cliente.getUsuario();
-            if (usuario != null) {
-                usuario.setNome(clienteDTO.usuario().getNome());
-                usuario.setEmail(clienteDTO.usuario().getEmail());
-                usuario.setSenha(clienteDTO.usuario().getSenha());
-            }
-
-            clienteRepository.persist(cliente);
-        } else {
-            throw new EntityNotFoundException("Cliente não encontrado");  
+            
+            // Atualizar os dados do usuário associado
+            cliente.getUsuario().setUsername(clienteDTO.username());
+            cliente.getUsuario().setNome(clienteDTO.nome());
+            cliente.getUsuario().setEmail(clienteDTO.email());
+            cliente.getUsuario().setSenha(clienteDTO.senha()); // Certifique-se de que a senha está sendo hashada
+    
+            // Persistir as alterações
+            clienteRepository.persist(cliente); 
         }
     }
-
+    
     @Override
     @Transactional
     public void delete(Long id) {
-        Cliente cliente = clienteRepository.findById(id);
-        if (cliente != null) {
-            clienteRepository.delete(cliente);
-        }
+        // Excluir o cliente pelo id
+        clienteRepository.deleteById(id);
     }
 
     @Override
     public List<ClienteResponseDTO> listAll() {
-        return clienteRepository.findAll().stream()
-                .map(cliente -> new ClienteResponseDTO(
-                        cliente.getId(),
-                        cliente.getCpf(),
-                        cliente.getUsuario().getNome(),
-                        cliente.getUsuario().getEmail(),
-                        cliente.getTelefone(),
-                        cliente.getEndereco(),
-                        cliente.getDataNascimento()))
-                .collect(Collectors.toList());
+        // Listar todos os clientes e mapear para o DTO
+        return clienteRepository.findAll().list().stream()
+                .map(ClienteResponseDTO::valueOf)
+                .toList();
     }
 
     @Override
     public List<ClienteResponseDTO> findByNome(String nome) {
+        // Buscar clientes pelo nome
         return clienteRepository.findByNome(nome).stream()
-                .map(cliente -> new ClienteResponseDTO(
-                        cliente.getId(),
-                        cliente.getCpf(),
-                        cliente.getUsuario().getNome(),
-                        cliente.getUsuario().getEmail(),
-                        cliente.getTelefone(),
-                        cliente.getEndereco(),
-                        cliente.getDataNascimento()))
-                .collect(Collectors.toList());
+                .map(ClienteResponseDTO::valueOf)
+                .toList();
     }
 }

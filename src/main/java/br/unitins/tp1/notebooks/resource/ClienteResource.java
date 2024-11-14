@@ -2,6 +2,7 @@ package br.unitins.tp1.notebooks.resource;
 
 import br.unitins.tp1.notebooks.dto.ClienteRequestDTO;
 import br.unitins.tp1.notebooks.dto.ClienteResponseDTO;
+import br.unitins.tp1.notebooks.modelo.Cliente;
 import br.unitins.tp1.notebooks.service.ClienteService;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
@@ -28,11 +29,14 @@ public class ClienteResource {
         return clienteService.findById(id);
     }
 
-    @POST
-    public Response create(ClienteRequestDTO clienteDTO) {
-        ClienteResponseDTO createdCliente = clienteService.create(clienteDTO);
-        return Response.status(Response.Status.CREATED).entity(createdCliente).build();
-    }
+ @POST
+public Response create(ClienteRequestDTO clienteDTO) {
+    Cliente createdCliente = clienteService.create(clienteDTO);
+    ClienteResponseDTO clienteResponseDTO = ClienteResponseDTO.valueOf(createdCliente);
+    return Response.status(Response.Status.CREATED)
+                   .entity(clienteResponseDTO)
+                   .build();
+}
 
     @GET
     @Path("/search/{nome}")

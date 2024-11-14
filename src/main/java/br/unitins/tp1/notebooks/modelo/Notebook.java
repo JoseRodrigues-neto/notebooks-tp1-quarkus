@@ -1,14 +1,13 @@
 package br.unitins.tp1.notebooks.modelo;
 
-import jakarta.persistence.*;
- 
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.ManyToOne;
 
 @Entity
-public class Notebook  {
+public class Notebook extends DefaultEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
     private String modelo;
     private Double preco;
     private Integer garantia;
@@ -21,18 +20,14 @@ public class Notebook  {
 
     @Enumerated(EnumType.STRING)
     private Cor cor;
- 
 
     @ManyToOne
     private Categoria categoria;
-   
 
-    public Notebook(){}
-    
+    public Notebook() {}
 
-    public Notebook(Long id, String modelo, Double preco, Integer garantia, Fabricante fabricante,
-            Especificacao especificacao, Cor cor, Categoria categoria) {
-        this.id = id;
+    public Notebook(String modelo, Double preco, Integer garantia, Fabricante fabricante,
+                    Especificacao especificacao, Cor cor, Categoria categoria) {
         this.modelo = modelo;
         this.preco = preco;
         this.garantia = garantia;
@@ -42,15 +37,7 @@ public class Notebook  {
         this.categoria = categoria;
     }
 
-    // Getters e Setters
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
+   
     public String getModelo() {
         return modelo;
     }

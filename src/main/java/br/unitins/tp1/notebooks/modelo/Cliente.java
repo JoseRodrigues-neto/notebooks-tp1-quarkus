@@ -2,49 +2,29 @@ package br.unitins.tp1.notebooks.modelo;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 import java.time.LocalDate;
 
-@Entity
-public class Cliente {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    
-    @Column(unique = true) 
+@Entity
+public class Cliente extends DefaultEntity {
+
+
+    @Column(nullable = false, unique = true)
     private String cpf;
-    private String telefone; 
-    private String endereco;   
-    private LocalDate dataNascimento;   
-    
+
+    private String telefone;
+    private String endereco;
+
+    @Column(name = "data_nascimento")
+    private LocalDate dataNascimento;
+
     @OneToOne
+    @JoinColumn(name = "usuario", nullable = false)
     private Usuario usuario;
 
- 
-    public Cliente() {
-    }
 
-   
-    public Cliente(String cpf, Usuario usuario, String telefone, String endereco, LocalDate dataNascimento) {
-        this.cpf = cpf;
-        this.usuario = usuario;
-        this.telefone = telefone;
-        this.endereco = endereco;
-        this.dataNascimento = dataNascimento;
-    }
-
-    
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
 
     public String getCpf() {
         return cpf;
@@ -52,14 +32,6 @@ public class Cliente {
 
     public void setCpf(String cpf) {
         this.cpf = cpf;
-    }
-
-    public Usuario getUsuario() {
-        return usuario;
-    }
-
-    public void setUsuario(Usuario usuario) {
-        this.usuario = usuario;
     }
 
     public String getTelefone() {
@@ -84,5 +56,13 @@ public class Cliente {
 
     public void setDataNascimento(LocalDate dataNascimento) {
         this.dataNascimento = dataNascimento;
+    }
+
+    public Usuario getUsuario() {
+        return usuario;
+    }
+
+    public void setUsuario(Usuario usuario) {
+        this.usuario = usuario;
     }
 }

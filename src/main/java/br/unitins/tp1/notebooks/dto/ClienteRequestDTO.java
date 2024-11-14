@@ -4,9 +4,11 @@ import java.time.LocalDate;
 
 public record ClienteRequestDTO(
     String cpf, 
+    String username,
+    String nome,
+    String email,
+    String senha,
     String telefone, 
     String endereco, 
-    LocalDate dataNascimento, 
-    UsuarioRequestDTO usuario
-) {
-}
+    LocalDate dataNascimento
+) {}

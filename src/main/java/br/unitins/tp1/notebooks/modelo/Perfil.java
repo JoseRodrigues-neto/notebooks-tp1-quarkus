@@ -3,20 +3,15 @@ package br.unitins.tp1.notebooks.modelo;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 @JsonFormat(shape = JsonFormat.Shape.OBJECT)
-public enum Cor {
+public enum Perfil {
 
-    PRETO(1, "Preto"),
-    BRANCO(2, "Branco"),
-    CINZA(3, "Cinza"),
-    AZUL(4, "Azul"),
-    VERMELHO(5, "Vermelho"),
-    PRATA(6, "Prata");
+    ADM(1, "Adm"), 
+    USER(2, "User");
 
     private final Integer id;
     private final String label;
 
- 
-    Cor(Integer id, String label) {
+    Perfil(Integer id, String label) {
         this.id = id;
         this.label = label;
     }
@@ -29,13 +24,12 @@ public enum Cor {
         return label;
     }
 
-  
-    public static Cor valueOf(Integer id) {
+    public static Perfil valueOf(Integer id) {
         if (id == null)
             return null;
-        for (Cor cor : Cor.values()) {
-            if (cor.getId().equals(id))
-                return cor;
+        for (Perfil perfil : Perfil.values()) {
+            if (perfil.getId().equals(id))
+                return perfil;
         }
         throw new IllegalArgumentException("Id inválido");
     }
