@@ -23,7 +23,8 @@ public class Cliente extends DefaultEntity {
     @OneToOne
     @JoinColumn(name = "usuario", nullable = false)
     private Usuario usuario;
-
+    
+    private String nomeImagem;
 
 
     public String getCpf() {
@@ -64,5 +65,13 @@ public class Cliente extends DefaultEntity {
 
     public void setUsuario(Usuario usuario) {
         this.usuario = usuario;
+    }
+
+    public String getNomeImagem() {
+        return nomeImagem;
+    }
+
+    public void setNomeImagem(String nomeImagem) {
+        this.nomeImagem = nomeImagem;
     }
 }

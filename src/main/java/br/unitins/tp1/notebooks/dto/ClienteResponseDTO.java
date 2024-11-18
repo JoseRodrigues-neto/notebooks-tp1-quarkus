@@ -11,7 +11,8 @@ public record ClienteResponseDTO(
     String email,
     String telefone, 
     String endereco, 
-    LocalDate dataNascimento
+    LocalDate dataNascimento,
+    String nomeImagem
 ) {
     public static ClienteResponseDTO valueOf(Cliente cliente) {
         return new ClienteResponseDTO(
@@ -22,7 +23,8 @@ public record ClienteResponseDTO(
             cliente.getUsuario().getEmail(),
             cliente.getTelefone(),
             cliente.getEndereco(),
-            cliente.getDataNascimento()
+            cliente.getDataNascimento(),
+            cliente.getNomeImagem()
         );
     }
 }

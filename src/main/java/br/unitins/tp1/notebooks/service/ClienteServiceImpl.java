@@ -115,4 +115,17 @@ public class ClienteServiceImpl implements ClienteService {
                 .map(ClienteResponseDTO::valueOf)
                 .toList();
     }
+
+    @Override
+    @Transactional
+    public Cliente updateNomeImagem(Long id, String nomeImagem) {
+        Cliente Cliente = clienteRepository.findById(id);
+
+        Cliente.setNomeImagem(nomeImagem);
+        
+        return Cliente;
+    }
+
+
+
 }

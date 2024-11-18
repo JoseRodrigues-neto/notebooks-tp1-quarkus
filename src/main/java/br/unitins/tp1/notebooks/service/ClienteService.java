@@ -14,5 +14,7 @@ public interface ClienteService {
     void update(Long id, ClienteRequestDTO clienteDTO);
     void delete(Long id);
     List<ClienteResponseDTO> listAll(); 
+    Cliente updateNomeImagem(Long id, String nomeImagem);
+
 }
  

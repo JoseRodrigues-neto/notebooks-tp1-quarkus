@@ -13,7 +13,7 @@ public class Notebook extends DefaultEntity {
     private Integer garantia;
 
     @ManyToOne
-    private Fabricante fabricante;
+    private Fabricante fabricante; 
 
     @ManyToOne
     private Especificacao especificacao;

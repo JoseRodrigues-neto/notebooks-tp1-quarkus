@@ -7,7 +7,7 @@ import br.unitins.tp1.notebooks.dto.UsuarioRequestDTO;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.http.ContentType;
 import io.restassured.response.Response;
-import jakarta.inject.Inject;
+import jakarta.inject.Inject;a
 import org.junit.jupiter.api.Test;
 
 import static io.restassured.RestAssured.given;
