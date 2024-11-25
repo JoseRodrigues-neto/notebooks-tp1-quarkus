@@ -10,6 +10,7 @@ import br.unitins.tp1.notebooks.repository.UsuarioRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
+import jakarta.ws.rs.NotFoundException;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -20,87 +21,96 @@ public class FuncionarioServiceImpl implements FuncionarioService {
     @Inject
     FuncionarioRepository funcionarioRepository;
 
-        @Inject
-   HashService hashService;
+    @Inject
+    HashService hashService;
 
     @Inject
     UsuarioRepository usuarioRepository;
 
     @Override
-    public FuncionarioResponseDTO findById(Long id) {
-        Funcionario funcionario = funcionarioRepository.findById(id);
-        return funcionario != null ? FuncionarioResponseDTO.valueOf(funcionario) : null;
-    }
-
-    @Override
-    public List<FuncionarioResponseDTO> findByName(String name) {
-        return funcionarioRepository.findByName(name)
-                                    .stream()
-                                    .map(FuncionarioResponseDTO::valueOf)
-                                    .collect(Collectors.toList());
-    }
-
-    @Override
-    public List<FuncionarioResponseDTO> listAll() {
-        return funcionarioRepository.listAll()
-                                    .stream()
-                                    .map(FuncionarioResponseDTO::valueOf)
-                                    .collect(Collectors.toList());
-    }
-
-    @Override
     @Transactional
-    public FuncionarioResponseDTO create(FuncionarioRequestDTO funcionarioDTO) {
-         
+    public Funcionario create(FuncionarioRequestDTO funcionarioDTO) {
         Usuario usuario = new Usuario();
         usuario.setUsername(funcionarioDTO.username());
         usuario.setNome(funcionarioDTO.nome());
         usuario.setEmail(funcionarioDTO.email());
-       
+
+        // Gerar hash da senha
         String senhaHash = hashService.getHashSenha(funcionarioDTO.senha());
         usuario.setSenha(senhaHash);
 
-              usuario.setPerfil(Perfil.ADM);
+        // Definir perfil do usuário
+        usuario.setPerfil(Perfil.ADM);
 
         usuarioRepository.persist(usuario);
-       
+
         Funcionario funcionario = new Funcionario();
         funcionario.setMatricula(funcionarioDTO.matricula());
         funcionario.setCargo(funcionarioDTO.cargo());
-  
         funcionario.setUsuario(usuario);
+
         funcionarioRepository.persist(funcionario);
-        
-    
-        // Retornar o DTO de resposta
-        return FuncionarioResponseDTO.valueOf(funcionario);
+
+        return funcionario; // Retorna a entidade Funcionario diretamente
     }
-    
+
+    @Override
+    public Funcionario findById(Long id) {
+        return funcionarioRepository.findById(id);
+    }
 
     @Override
     @Transactional
     public void update(Long id, FuncionarioRequestDTO dto) {
         Funcionario funcionario = funcionarioRepository.findById(id);
-      
-            // Atualizando os campos do Funcionario
-            funcionario.setMatricula(dto.matricula());
-            funcionario.setCargo(dto.cargo());
-    
-           
-                // Atualizando o Usuario existente
-                Usuario usuario = funcionario.getUsuario();
-                usuario.setUsername(dto.username());
-                usuario.setNome(dto.nome());
-                usuario.setEmail(dto.email());
-                usuario.setSenha(dto.senha());
-    
-           
+        if (funcionario == null) {
+            throw new  NotFoundException("Funcionário não encontrado com o ID fornecido.");
         }
-    
-    
+
+        // Atualizando os campos do Funcionario
+        funcionario.setMatricula(dto.matricula());
+        funcionario.setCargo(dto.cargo());
+
+        // Atualizando o Usuario associado ao Funcionario
+        Usuario usuario = funcionario.getUsuario();
+        usuario.setUsername(dto.username());
+        usuario.setNome(dto.nome());
+        usuario.setEmail(dto.email());
+
+        // Atualizar a senha com hash se fornecida
+        if (dto.senha() != null && !dto.senha().isEmpty()) {
+            String senhaHash = hashService.getHashSenha(dto.senha());
+            usuario.setSenha(senhaHash);
+        }
+    }
+
     @Override
     @Transactional
     public void delete(Long id) {
-        funcionarioRepository.deleteById(id);
+        Funcionario funcionario = funcionarioRepository.findById(id);
+        if (funcionario == null) {
+            throw new NotFoundException("Funcionário não encontrado com o ID fornecido.");
+        }
+
+        // Remover o funcionário e o usuário associado
+        Usuario usuario = funcionario.getUsuario();
+        funcionarioRepository.delete(funcionario);
+        usuarioRepository.delete(usuario);
+    }
+
+    @Override
+    public List<FuncionarioResponseDTO> listAll() {
+        return funcionarioRepository.listAll()
+                .stream()
+                .map(FuncionarioResponseDTO::valueOf)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<FuncionarioResponseDTO> findByName(String name) {
+        return funcionarioRepository.findByName(name)
+                .stream()
+                .map(FuncionarioResponseDTO::valueOf)
+                .collect(Collectors.toList());
     }
 }

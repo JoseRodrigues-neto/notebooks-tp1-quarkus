@@ -1,16 +1,27 @@
 package br.unitins.tp1.notebooks.modelo;
  
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 
 @Entity
 public class Especificacao extends DefaultEntity {
 
- 
+    @Column(nullable = false, length = 100)
     private String processador;
+
+    @Column(nullable = false, length = 100)
     private String memoriaRam;
+
+    @Column(nullable = false, length = 100)
     private String armazenamento;
+
+    @Column(nullable = false, length = 100)
     private String tela;
+
+    @Column(nullable = false, length = 100)
     private String bateria;
+
+    @Column(nullable = false, length = 100)
     private Double peso;
 
 

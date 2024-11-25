@@ -29,22 +29,22 @@ public class NotebookServiceImpl implements NotebookService {
 
     @Override
     @Transactional
-    public NotebookResponseDTO create(NotebookRequestDTO dto) {
+    public Notebook create(NotebookRequestDTO notebookRequestDTO) {
         Notebook notebook = new Notebook();
-        populateNotebookFields(notebook, dto);
+        populateNotebookFields(notebook, notebookRequestDTO);
         notebookRepository.persist(notebook);
-        return NotebookResponseDTO.valueOf(notebook); // Chamada direta para valueOf
+        return notebook;
     }
 
     @Override
     @Transactional
-    public NotebookResponseDTO update(Long id, NotebookRequestDTO dto) {
+    public Notebook update(Long id, NotebookRequestDTO notebookRequestDTO) {
         Notebook notebook = notebookRepository.findById(id);
         if (notebook == null) {
-            return null;  
+            throw new IllegalArgumentException("Notebook não encontrado para o ID fornecido.");
         }
-        populateNotebookFields(notebook, dto);
-        return NotebookResponseDTO.valueOf(notebook); // Chamada direta para valueOf
+        populateNotebookFields(notebook, notebookRequestDTO);
+        return notebook;
     }
 
     @Override
@@ -53,28 +53,33 @@ public class NotebookServiceImpl implements NotebookService {
         Notebook notebook = notebookRepository.findById(id);
         if (notebook != null) {
             notebookRepository.delete(notebook);
+        } else {
+            throw new IllegalArgumentException("Notebook não encontrado para o ID fornecido.");
         }
     }
-     
-        @Override
+
+    @Override
     public List<NotebookResponseDTO> findByModelo(String modelo) {
         List<Notebook> notebooks = notebookRepository.findByModelo(modelo);
         return notebooks.stream()
-                .map(NotebookResponseDTO::valueOf) 
+                .map(NotebookResponseDTO::valueOf)
                 .collect(Collectors.toList());
     }
 
     @Override
-    public NotebookResponseDTO findById(Long id) {
+    public Notebook findById(Long id) {
         Notebook notebook = notebookRepository.findById(id);
-        return (notebook != null) ? NotebookResponseDTO.valueOf(notebook) : null; // Chamada direta para valueOf
+        if (notebook == null) {
+            throw new IllegalArgumentException("Notebook não encontrado para o ID fornecido.");
+        }
+        return notebook;
     }
 
     @Override
     public List<NotebookResponseDTO> findAll() {
         return notebookRepository.findAll().list()
                 .stream()
-                .map(NotebookResponseDTO::valueOf) // Chamada direta para valueOf
+                .map(NotebookResponseDTO::valueOf)
                 .collect(Collectors.toList());
     }
 
@@ -84,7 +89,7 @@ public class NotebookServiceImpl implements NotebookService {
         notebook.setGarantia(dto.garantia());
         notebook.setFabricante(fabricanteRepository.findById(dto.fabricanteId()));
         notebook.setEspecificacao(especificacaoRepository.findById(dto.especificacaoId()));
-        notebook.setCor(Cor.valueOf(dto.cor().toUpperCase()));       
+        notebook.setCor(Cor.valueOf(dto.cor().toUpperCase()));
         notebook.setCategoria(categoriaRepository.findById(dto.categoriaId()));
     }
 }

@@ -7,6 +7,7 @@ import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 
@@ -14,6 +15,7 @@ import jakarta.persistence.OneToMany;
 public class Pedido extends DefaultEntity {
     
     @ManyToOne
+      @JoinColumn(name = "cliente_id", nullable = false)
     private Cliente cliente;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
@@ -34,6 +36,7 @@ public class Pedido extends DefaultEntity {
         this.itens = itens;
         this.dataPedido = LocalDate.now();
         this.valorTotal = valorTotal;
+        this.status = StatusPedido.PENDENTE;
     }
 
 
@@ -67,6 +70,14 @@ public class Pedido extends DefaultEntity {
 
     public void setValorTotal (Double total) {
         this.valorTotal = total;
+    }
+
+    public StatusPedido getStatus() {
+        return status;
+    }
+
+    public void setStatus(StatusPedido status) {
+        this.status = status;
     }
 
      

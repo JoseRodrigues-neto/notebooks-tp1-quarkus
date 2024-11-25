@@ -1,27 +1,37 @@
 package br.unitins.tp1.notebooks.modelo;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 
 @Entity
 public class Notebook extends DefaultEntity {
-
+  
+     @Column(length = 100, nullable = false)
     private String modelo;
+
+    @Column(nullable = false)
     private Double preco;
+
+    @Column(nullable = false)
     private Integer garantia;
 
     @ManyToOne
+     @JoinColumn(name = "fabricante_id", nullable = false) 
     private Fabricante fabricante; 
 
     @ManyToOne
+    @JoinColumn(name = "especificacao_id", nullable = false) 
     private Especificacao especificacao;
 
     @Enumerated(EnumType.STRING)
     private Cor cor;
 
     @ManyToOne
+    @JoinColumn(name = "categoria_id", nullable = false)
     private Categoria categoria;
 
     public Notebook() {}

@@ -3,7 +3,7 @@ package br.unitins.tp1.notebooks.resource;
 import br.unitins.tp1.notebooks.dto.LoteRequestDTO;
 import br.unitins.tp1.notebooks.dto.LoteResponseDTO;
 import br.unitins.tp1.notebooks.service.LoteService;
-
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.*;
@@ -12,6 +12,7 @@ import jakarta.ws.rs.core.Response;
 import java.util.List;
 
 @Path("/lotes")
+@RolesAllowed("Adm")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
 public class LoteResource {
@@ -27,19 +28,20 @@ public class LoteResource {
     @GET
     @Path("/{id}")
     public LoteResponseDTO findById(@PathParam("id") Long id) {
-        return loteService.findById(id);
+        return LoteResponseDTO.valueOf(loteService.findById(id));
     }
 
     @POST
     public Response create(@Valid LoteRequestDTO dto) {
-        LoteResponseDTO createdLote = loteService.create(dto);
+        LoteResponseDTO createdLote = LoteResponseDTO.valueOf(loteService.create(dto));
         return Response.status(Response.Status.CREATED).entity(createdLote).build();
     }
 
     @PUT
     @Path("/{id}")
-    public LoteResponseDTO update(@PathParam("id") Long id, @Valid LoteRequestDTO dto) {
-        return loteService.update(id, dto);
+    public Response update(@PathParam("id") Long id, @Valid LoteRequestDTO dto) {
+        LoteResponseDTO updatedLote = LoteResponseDTO.valueOf(loteService.update(id, dto));
+        return Response.ok(updatedLote).build();
     }
 
     @DELETE

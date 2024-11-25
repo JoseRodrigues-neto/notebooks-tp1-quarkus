@@ -2,8 +2,11 @@ package br.unitins.tp1.notebooks.resource;
 
 import br.unitins.tp1.notebooks.dto.CategoriaRequestDTO;
 import br.unitins.tp1.notebooks.dto.CategoriaResponseDTO;
+import br.unitins.tp1.notebooks.modelo.Categoria;
 import br.unitins.tp1.notebooks.service.CategoriaService;
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
+import jakarta.validation.Valid;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
@@ -11,28 +14,45 @@ import jakarta.ws.rs.core.Response;
 import java.util.List;
 
 @Path("/categorias")
-@Produces(MediaType.APPLICATION_JSON)
+@RolesAllowed("Adm")
 @Consumes(MediaType.APPLICATION_JSON)
+@Produces(MediaType.APPLICATION_JSON)
 public class CategoriaResource {
 
     @Inject
     CategoriaService categoriaService;
 
-    @POST
-    public CategoriaResponseDTO create(CategoriaRequestDTO categoriaRequestDTO) {
-        return categoriaService.create(categoriaRequestDTO);
+    @POST    
+    @RolesAllowed("Adm")
+    public Response create(@Valid CategoriaRequestDTO dto) {
+        Categoria categoria = categoriaService.create(dto);
+        CategoriaResponseDTO response = CategoriaResponseDTO.valueOf(categoria); // Converte para DTO
+        return Response.status(Response.Status.CREATED).entity(response).build();
     }
 
     @PUT
     @Path("/{id}")
-    public CategoriaResponseDTO update(@PathParam("id") Long id, CategoriaRequestDTO categoriaRequestDTO) {
-        return categoriaService.update(id, categoriaRequestDTO);
+    public Response update(@PathParam("id") Long id, CategoriaRequestDTO dto) {
+        Categoria categoria = categoriaService.update(id, dto);
+        CategoriaResponseDTO response = CategoriaResponseDTO.valueOf(categoria); // Converte para DTO
+        return Response.ok(response).build();
     }
 
-    @DELETE
+    @GET
     @Path("/{id}")
-    public void delete(@PathParam("id") Long id) {
-        categoriaService.delete(id);
+    public Response findById(@PathParam("id") Long id) {
+        Categoria categoria = categoriaService.findById(id);
+        if (categoria == null) {
+            return Response.status(Response.Status.NOT_FOUND).build();
+        }
+        CategoriaResponseDTO response = CategoriaResponseDTO.valueOf(categoria); 
+        return Response.ok(response).build();
+    }
+
+    @GET
+    public Response findAll() {
+        List<CategoriaResponseDTO> categorias = categoriaService.findAll();
+        return Response.ok(categorias).build();
     }
 
     @GET
@@ -42,14 +62,10 @@ public class CategoriaResource {
         return Response.ok(categorias).build();
     }
 
-    @GET
+    @DELETE
     @Path("/{id}")
-    public CategoriaResponseDTO findById(@PathParam("id") Long id) {
-        return categoriaService.findById(id);
-    }
-
-    @GET
-    public List<CategoriaResponseDTO> findAll() {
-        return categoriaService.findAll();
+    public Response delete(@PathParam("id") Long id) {
+        categoriaService.delete(id);
+        return Response.noContent().build();
     }
 }

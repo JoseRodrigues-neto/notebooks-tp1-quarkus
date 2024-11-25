@@ -18,13 +18,13 @@ public class UsuarioServiceImpl implements UsuarioService {
 
     @Override
     @Transactional
-    public UsuarioResponseDTO create(String nome, String email, String senha) {
+    public Usuario create(String nome, String email, String senha) {
         Usuario usuario = new Usuario();
         usuario.setNome(nome);
         usuario.setEmail(email);
         usuario.setSenha(senha);
         usuarioRepository.persist(usuario);
-        return UsuarioResponseDTO.valueOf(usuario); // Retorna o DTO do usuário criado
+        return usuario; // Retorna o objeto `Usuario`, conforme a interface
     }
 
     @Override
@@ -37,6 +37,7 @@ public class UsuarioServiceImpl implements UsuarioService {
         usuario.setNome(nome);
         usuario.setEmail(email);
         usuario.setSenha(senha);
+        // Alterações persistidas automaticamente devido à transação
     }
 
     @Override
@@ -65,19 +66,19 @@ public class UsuarioServiceImpl implements UsuarioService {
     }
 
     @Override
-    public UsuarioResponseDTO findById(Long id) {
+    public Usuario findById(Long id) {
         Usuario usuario = usuarioRepository.findById(id);
         if (usuario == null) {
             throw new RuntimeException("Usuário não encontrado.");
         }
-        return UsuarioResponseDTO.valueOf(usuario);
+        return usuario; // Retorna o objeto `Usuario`, conforme a interface
     }
 
     @Override
     public Usuario findByUsernameAndSenha(String username, String senha) {
         Usuario usuario = usuarioRepository.findByUsername(username);
         if (usuario == null || !usuario.getSenha().equals(senha)) {
-            return null;
+            throw new RuntimeException("Usuário ou senha incorretos.");
         }
         return usuario;
     }

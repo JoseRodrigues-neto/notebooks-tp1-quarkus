@@ -13,9 +13,9 @@ public class PedidoRepository implements PanacheRepository<Pedido> {
     // Aqui você pode adicionar métodos personalizados, se necessário
   
     // Exemplo: Encontrar pedidos por cliente
-    public List<Pedido> findByClienteId(Long clienteId) {
-        return find("cliente.id", clienteId).list();
-    }
+    // public List<Pedido> findByClienteId(Long clienteId) {
+    //     return find("cliente.id", clienteId).list();
+    // }
 
     // Exemplo: Encontrar pedidos por data
     public List<Pedido> findByDataPedido(LocalDate dataPedido) {
@@ -25,5 +25,8 @@ public class PedidoRepository implements PanacheRepository<Pedido> {
     public Pedido findById(Long id) {
         return find("id", id).firstResult(); // Usando o método find para buscar pelo ID
     }
-  
+    
+    public List<Pedido> findByClienteId(Long cliente_id) {
+        return find("cliente.id = ?1", cliente_id).list();  // Busca os pedidos pelo ID do cliente
+    }
 }

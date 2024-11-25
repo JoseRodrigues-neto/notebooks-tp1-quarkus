@@ -1,12 +1,15 @@
 package br.unitins.tp1.notebooks.modelo;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
  
 @Entity
 public class Fabricante extends DefaultEntity {
     
-   
+    @Column(length = 100)
     private String nome;
+
+    @Column( length = 100)
     private String paisOrigem;
 
 

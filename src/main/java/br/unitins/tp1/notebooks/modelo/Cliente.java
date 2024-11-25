@@ -15,6 +15,7 @@ public class Cliente extends DefaultEntity {
     private String cpf;
 
     private String telefone;
+    
     private String endereco;
 
     @Column(name = "data_nascimento")
@@ -38,7 +39,7 @@ public class Cliente extends DefaultEntity {
     public String getTelefone() {
         return telefone;
     }
-
+ 
     public void setTelefone(String telefone) {
         this.telefone = telefone;
     }

@@ -12,7 +12,8 @@ public class Funcionario extends DefaultEntity {
  
     @Column(nullable = false, unique = true)
     private String matricula;
-
+    
+    @Column(nullable = false, length = 100)
     private String cargo;
 
     @OneToOne

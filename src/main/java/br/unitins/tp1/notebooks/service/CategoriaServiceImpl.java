@@ -7,6 +7,7 @@ import br.unitins.tp1.notebooks.repository.CategoriaRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
+
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -18,25 +19,30 @@ public class CategoriaServiceImpl implements CategoriaService {
 
     @Override
     @Transactional
-    public CategoriaResponseDTO create(CategoriaRequestDTO categoriaRequestDTO) {
+    public Categoria create(CategoriaRequestDTO categoriaRequestDTO) {
+        // Criar uma nova entidade Categoria a partir do DTO de entrada
         Categoria categoria = new Categoria();
-        categoria.setNome(categoriaRequestDTO.nome()); // Acessando o campo do record
-        categoria.setDescricao(categoriaRequestDTO.descricao()); // Acessando o campo do record
+        categoria.setNome(categoriaRequestDTO.nome());
+        categoria.setDescricao(categoriaRequestDTO.descricao());
+        
+        // Persistir a nova Categoria
         categoriaRepository.persist(categoria);
-        return new CategoriaResponseDTO(categoria.getId(), categoria.getNome(), categoria.getDescricao());
+        
+        // Retornar a entidade Categoria (como esperado pela interface)
+        return categoria;
     }
 
     @Override
     @Transactional
-    public CategoriaResponseDTO update(Long id, CategoriaRequestDTO categoriaRequestDTO) {
+    public Categoria update(Long id, CategoriaRequestDTO categoriaRequestDTO) {
         Categoria categoria = categoriaRepository.findById(id);
         if (categoria == null) {
-            return null;  
+            throw new IllegalArgumentException("Categoria não encontrada com o ID fornecido.");
         }
-        categoria.setNome(categoriaRequestDTO.nome()); // Acessando o campo do record
-        categoria.setDescricao(categoriaRequestDTO.descricao()); // Acessando o campo do record
-        categoriaRepository.persist(categoria); // Persistindo a atualização
-        return new CategoriaResponseDTO(categoria.getId(), categoria.getNome(), categoria.getDescricao());
+        categoria.setNome(categoriaRequestDTO.nome());
+        categoria.setDescricao(categoriaRequestDTO.descricao());
+        categoriaRepository.persist(categoria);
+        return categoria;
     }
 
     @Override
@@ -48,31 +54,24 @@ public class CategoriaServiceImpl implements CategoriaService {
         }
     }
 
-
-
     @Override
-    public List<CategoriaResponseDTO> findByNome(String nome) {
-        return categoriaRepository.findByNome(nome)
-                .stream()
-                .map(CategoriaResponseDTO::valueOf)
-                .collect(Collectors.toList());
-    }
-
-
-    @Override
-    public CategoriaResponseDTO findById(Long id) {
-        Categoria categoria = categoriaRepository.findById(id);
-        if (categoria == null) {
-            return null;  
-        }
-        return new CategoriaResponseDTO(categoria.getId(), categoria.getNome(), categoria.getDescricao());
+    public Categoria findById(Long id) {
+        return categoriaRepository.findById(id);
     }
 
     @Override
     public List<CategoriaResponseDTO> findAll() {
         return categoriaRepository.findAll().list()
                 .stream()
-                .map(categoria -> new CategoriaResponseDTO(categoria.getId(), categoria.getNome(), categoria.getDescricao()))
+                .map(CategoriaResponseDTO::valueOf)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<CategoriaResponseDTO> findByNome(String nome) {
+        return categoriaRepository.findByNome(nome)
+                .stream()
+                .map(CategoriaResponseDTO::valueOf)
                 .collect(Collectors.toList());
     }
 }

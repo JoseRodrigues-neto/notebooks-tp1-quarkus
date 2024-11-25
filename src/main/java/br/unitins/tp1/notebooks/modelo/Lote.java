@@ -2,15 +2,22 @@ package br.unitins.tp1.notebooks.modelo;
 
 import java.time.LocalDate;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 
 @Entity
 public class Lote extends DefaultEntity {
    
     @ManyToOne 
+    @JoinColumn(name = "notebook_id", nullable = false) 
     private Notebook notebook;
+
+     @Column(nullable = false)
     private int quantidade;
+
+    @Column(nullable = false)
     private LocalDate dataEntrada;
    
 

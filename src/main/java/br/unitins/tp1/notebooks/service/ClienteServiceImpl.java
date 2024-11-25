@@ -4,6 +4,7 @@ import br.unitins.tp1.notebooks.dto.ClienteRequestDTO;
 import br.unitins.tp1.notebooks.dto.ClienteResponseDTO;
 import br.unitins.tp1.notebooks.modelo.Cliente;
 import br.unitins.tp1.notebooks.modelo.Perfil;
+import  br.unitins.tp1.notebooks.validation.ValidationException;
 import br.unitins.tp1.notebooks.modelo.Usuario;
 import br.unitins.tp1.notebooks.service.HashServiceImpl;
 import br.unitins.tp1.notebooks.repository.ClienteRepository;
@@ -11,10 +12,12 @@ import br.unitins.tp1.notebooks.repository.UsuarioRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
+import jakarta.validation.Valid;
+ 
 
 import java.util.List;
 
-@ApplicationScoped
+@ApplicationScoped 
 public class ClienteServiceImpl implements ClienteService {
 
     @Inject
@@ -28,7 +31,9 @@ public class ClienteServiceImpl implements ClienteService {
 
     @Override
     @Transactional
-    public Cliente create(ClienteRequestDTO clienteDTO) {
+    public Cliente create(@Valid ClienteRequestDTO clienteDTO) {
+       
+        validarCpf(clienteDTO.cpf());
         // Criar um novo Usuario e setar os atributos
         Usuario usuario = new Usuario();
         usuario.setUsername(clienteDTO.username());
@@ -58,16 +63,20 @@ public class ClienteServiceImpl implements ClienteService {
         return cliente;
     }
     
-    
+    private void validarCpf(String cpf) {
+        Cliente cliente = clienteRepository.findByCpf(cpf);
+        if (cliente != null) 
+            throw new ValidationException("cpf", "cpf já cadastrado");
+    }
 
     @Override
     public ClienteResponseDTO findById(Long id) {
-        // Buscar o cliente pelo id
+       
         Cliente cliente = clienteRepository.findById(id);
         if (cliente != null) {
             return ClienteResponseDTO.valueOf(cliente);
         }
-        return null; // Ou lançar uma exceção personalizada
+        return null; 
     }
 
     @Override

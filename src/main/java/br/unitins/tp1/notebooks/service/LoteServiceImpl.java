@@ -31,17 +31,17 @@ public class LoteServiceImpl implements LoteService {
     }
 
     @Override
-    public LoteResponseDTO findById(Long id) {
+    public Lote findById(Long id) {
         Lote lote = loteRepository.findById(id);
         if (lote == null) {
             throw new IllegalArgumentException("Lote não encontrado com o ID: " + id);
         }
-        return LoteResponseDTO.valueOf(lote);
+        return lote;
     }
 
     @Override
     @Transactional
-    public LoteResponseDTO create(LoteRequestDTO dto) {
+    public Lote create(LoteRequestDTO dto) {
         Notebook notebook = notebookRepository.findById(dto.notebookId());
         if (notebook == null) {
             throw new IllegalArgumentException("Notebook não encontrado com o ID: " + dto.notebookId());
@@ -51,12 +51,12 @@ public class LoteServiceImpl implements LoteService {
         lote.setDataEntrada(dto.dataEntrada());
         loteRepository.persist(lote);
 
-        return LoteResponseDTO.valueOf(lote);
+        return lote;
     }
 
     @Override
     @Transactional
-    public LoteResponseDTO update(Long id, LoteRequestDTO dto) {
+    public Lote update(Long id, LoteRequestDTO dto) {
         Lote lote = loteRepository.findById(id);
         if (lote == null) {
             throw new IllegalArgumentException("Lote não encontrado com o ID: " + id);
@@ -71,7 +71,7 @@ public class LoteServiceImpl implements LoteService {
         lote.setQuantidade(dto.quantidade());
         lote.setDataEntrada(dto.dataEntrada());
 
-        return LoteResponseDTO.valueOf(lote);
+        return lote;
     }
 
     @Override
@@ -84,13 +84,11 @@ public class LoteServiceImpl implements LoteService {
 
     @Override
     public int verificarEstoque(Long notebookId) {
-        // Verifica se o notebook existe
         Notebook notebook = notebookRepository.findById(notebookId);
         if (notebook == null) {
             throw new IllegalArgumentException("Notebook não encontrado com o ID: " + notebookId);
         }
 
-        // Calcula o estoque total
         return loteRepository.findByNotebookId(notebookId)
                 .stream()
                 .mapToInt(Lote::getQuantidade)
@@ -112,20 +110,20 @@ public class LoteServiceImpl implements LoteService {
             int quantidadeLote = lote.getQuantidade();
 
             if (restante <= 0) {
-                break; // Quantidade já foi totalmente reduzida.
+                break; // Quantidade já foi totalmente reduzida
             }
 
             if (quantidadeLote <= restante) {
-                // Reduzir tudo do lote e continuar para o próximo.
+                // Reduzir todo o estoque do lote atual
                 restante -= quantidadeLote;
                 lote.setQuantidade(0);
             } else {
-                // Reduzir parte do lote e finalizar.
+                // Reduzir parcialmente o estoque do lote
                 lote.setQuantidade(quantidadeLote - restante);
                 restante = 0;
             }
 
-            loteRepository.persist(lote); // Atualiza o lote no banco.
+            loteRepository.persist(lote); // Atualiza o lote no banco
         }
 
         if (restante > 0) {

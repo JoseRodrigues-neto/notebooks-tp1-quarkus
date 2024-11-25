@@ -3,7 +3,9 @@ package br.unitins.tp1.notebooks.resource;
 import br.unitins.tp1.notebooks.dto.FabricanteRequestDTO;
 import br.unitins.tp1.notebooks.dto.FabricanteResponseDTO;
 import br.unitins.tp1.notebooks.service.FabricanteService;
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
+import jakarta.validation.Valid;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
@@ -35,13 +37,15 @@ public class FabricanteResource {
     }
 
     @POST
-    public Response create(FabricanteRequestDTO fabricante) {
+    @RolesAllowed("Adm")
+    public Response create(@Valid FabricanteRequestDTO fabricante) {
         service.create(fabricante);
         return Response.status(Response.Status.CREATED).build();
     }
 
     @PUT
     @Path("/{id}")
+    @RolesAllowed("Adm")
     public Response update (@PathParam("id") Long id, FabricanteRequestDTO fabricante) {
         service.update(id, fabricante);
         return Response.ok().build();
@@ -49,6 +53,7 @@ public class FabricanteResource {
 
     @DELETE
     @Path("/{id}")
+    @RolesAllowed("Adm")
     public Response delete(@PathParam("id") Long id) {
         service.delete(id);
         return Response.noContent().build();

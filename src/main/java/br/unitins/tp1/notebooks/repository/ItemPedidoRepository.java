@@ -7,10 +7,5 @@ import jakarta.enterprise.context.ApplicationScoped;
 
 @ApplicationScoped
 public class ItemPedidoRepository implements PanacheRepository<ItemPedido> {
-    // Todos os métodos padrão do Panache estão disponíveis:
-    // - persist()
-    // - findById()
-    // - listAll()
-    // - delete()
-    // Métodos personalizados podem ser adicionados abaixo, se necessário.
+
 }

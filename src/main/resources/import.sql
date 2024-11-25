@@ -31,15 +31,18 @@ VALUES ('Intel Core i7', '16GB', '512GB SSD', '13.3 polegadas', '5000mAh', 1.2),
 
  
 INSERT INTO Usuario (perfil,email, nome,senha, username ) 
-VALUES ('1','joaosilva@email.com', 'João da Silva','59Af5ITwXq76BnsGob+0ARmVPdsW5g0Jd8UWs6n1OxhcXHgKZ/ogprO5ZLz/iJokPTBUAmNGN5Rkt+guiOj+1Q==',
+VALUES ('USER','joaosilva@email.com', 'João da Silva','59Af5ITwXq76BnsGob+0ARmVPdsW5g0Jd8UWs6n1OxhcXHgKZ/ogprO5ZLz/iJokPTBUAmNGN5Rkt+guiOj+1Q==',
 'j123');
 
 INSERT INTO Usuario (perfil,email, nome,senha, username ) 
-VALUES ('0','joseneto@email.com', 'jose da Silva','59Af5ITwXq76BnsGob+0ARmVPdsW5g0Jd8UWs6n1OxhcXHgKZ/ogprO5ZLz/iJokPTBUAmNGN5Rkt+guiOj+1Q==',
+VALUES ('ADM','joseneto@email.com', 'jose da Silva','59Af5ITwXq76BnsGob+0ARmVPdsW5g0Jd8UWs6n1OxhcXHgKZ/ogprO5ZLz/iJokPTBUAmNGN5Rkt+guiOj+1Q==',
 'n123');
 
-  INSERT INTO cliente (data_nascimento, Usuario, cpf, endereco, telefone)
+  INSERT INTO cliente (data_nascimento, usuario, cpf, endereco, telefone)
 VALUES ('2000-01-01',1,'12345678900','Rua dos Exemplos, 123' ,'(11) 98765-4321');
 
 INSERT INTO funcionario (matricula, cargo, usuario)
 values ('1595', 'gerente',2);
+
+INSERT into Lote (dataentrada, quantidade,notebook_id)
+values ('2024-01-01', 20, 1);

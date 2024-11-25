@@ -1,19 +1,25 @@
 package br.unitins.tp1.notebooks.service;
 
+import br.unitins.tp1.notebooks.dto.ItemPedidoRequestDTO;
 import br.unitins.tp1.notebooks.dto.PedidoRequestDTO;
+import br.unitins.tp1.notebooks.dto.PedidoResponseDTO;
 import br.unitins.tp1.notebooks.modelo.Pedido;
+import br.unitins.tp1.notebooks.modelo.StatusPedido;
 import br.unitins.tp1.notebooks.modelo.Cliente;
 import br.unitins.tp1.notebooks.modelo.ItemPedido;
 import br.unitins.tp1.notebooks.modelo.Notebook;
 import br.unitins.tp1.notebooks.repository.ClienteRepository;
 import br.unitins.tp1.notebooks.repository.NotebookRepository;
 import br.unitins.tp1.notebooks.repository.PedidoRepository;
-
+import org.eclipse.microprofile.jwt.JsonWebToken;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
+
+
 import java.util.List;
 import java.util.stream.Collectors;
+
 
 @ApplicationScoped
 public class PedidoServiceImpl implements PedidoService {
@@ -29,10 +35,15 @@ public class PedidoServiceImpl implements PedidoService {
     ClienteRepository clienteRepository;
 
     @Inject
-    ItemPedidoServiceImpl itemPedidoService; // Serviço de itens do pedido
+    ItemPedidoServiceImpl itemPedidoService;  
 
     @Inject
-    LoteService loteService; // Serviço de controle de estoque
+    LoteService loteService; 
+
+   
+
+    @Inject
+    JsonWebToken jwt;
 
    @Override
 @Transactional
@@ -142,4 +153,34 @@ public Pedido create(PedidoRequestDTO pedidoDTO) {
     public List<Pedido> listAll() {
         return pedidoRepository.listAll();
     }
+    
+    @Override
+    @Transactional
+    public Pedido alterarStatusPedido(Long pedidoId, Long statusId) {
+        Pedido pedido = findById(pedidoId);
+
+        StatusPedido novoStatus = StatusPedido.fromId(statusId);
+        if (novoStatus == null) {
+            throw new IllegalArgumentException("ID do status inválido: " + statusId);
+        }
+
+        pedido.setStatus(novoStatus);
+        pedidoRepository.persist(pedido); // Atualiza o pedido no banco
+        return pedido;
+    }
+
+  // metodos pessoais
+    @Override
+    public List<PedidoResponseDTO> findByCliente(Long idCliente) {
+        return pedidoRepository.findByClienteId(idCliente).stream()  // Usando o método do repositório para buscar pelo ID
+            .map(PedidoResponseDTO::valueOf)  // Convertendo os pedidos para o DTO
+            .collect(Collectors.toList());  // Coletando em uma lista
+    }
+    
+  
+    @Override
+    public List<PedidoResponseDTO> findMyPedidos() {
+  
+        return findByCliente(clienteRepository.findByUsername(jwt.getName()).getId());
+    } 
 }

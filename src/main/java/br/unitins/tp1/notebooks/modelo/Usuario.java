@@ -2,6 +2,8 @@ package br.unitins.tp1.notebooks.modelo;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
  
 @Entity
 public class Usuario extends DefaultEntity {
@@ -10,9 +12,15 @@ public class Usuario extends DefaultEntity {
     @Column(nullable = false, unique = true)
     private String username;
 
-    private String nome;  
+    private String nome; 
+    
+    @Column(nullable = false, unique = true)
     private String email;  
+
+    @Column(nullable = false)
     private String senha;  
+
+    @Enumerated(EnumType.STRING) 
     private Perfil perfil;
  
     public Usuario() {

@@ -6,6 +6,7 @@ import br.unitins.tp1.notebooks.form.ClienteImageForm;
 import br.unitins.tp1.notebooks.modelo.Cliente;
 import br.unitins.tp1.notebooks.service.ClienteService;
 import br.unitins.tp1.notebooks.service.FileService;
+import jakarta.validation.Valid;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
@@ -40,7 +41,7 @@ public class ClienteResource {
     }
 
  @POST
-public Response create(ClienteRequestDTO clienteDTO) {
+public Response create(@Valid ClienteRequestDTO clienteDTO) {
     Cliente createdCliente = clienteService.create(clienteDTO);
     ClienteResponseDTO clienteResponseDTO = ClienteResponseDTO.valueOf(createdCliente);
     return Response.status(Response.Status.CREATED)
