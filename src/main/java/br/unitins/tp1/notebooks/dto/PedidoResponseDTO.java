@@ -8,8 +8,8 @@ import java.util.List;
 public record PedidoResponseDTO(
         Long id,  
         StatusPedido status,                    
-        ClienteResponseDTO cliente,      
-        List<ItemPedidoResponseDTO> itens,  
+       ClienteResponseDTO cliente,      
+      //  List<ItemPedidoResponseDTO> itens,  
         LocalDate dataPedido,              
         Double valorTotal
        // Status statusPedido         
@@ -19,10 +19,10 @@ public record PedidoResponseDTO(
         return new PedidoResponseDTO(
                 pedido.getId(),
                 pedido.getStatus(),
-                ClienteResponseDTO.valueOf(pedido.getCliente()),  
-                pedido.getItens().stream()
-                        .map(ItemPedidoResponseDTO::valueOf)      
-                        .toList(),
+               ClienteResponseDTO.valueOf(pedido.getCliente()),  
+                // pedido.getItens().stream()
+                //         .map(ItemPedidoResponseDTO::valueOf)      
+                //         .toList(),
                 pedido.getDataPedido(),
                 pedido.getValorTotal()
         );

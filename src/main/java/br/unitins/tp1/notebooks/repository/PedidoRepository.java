@@ -10,14 +10,7 @@ import java.util.List;
 @ApplicationScoped
 public class PedidoRepository implements PanacheRepository<Pedido> {
 
-    // Aqui você pode adicionar métodos personalizados, se necessário
-  
-    // Exemplo: Encontrar pedidos por cliente
-    // public List<Pedido> findByClienteId(Long clienteId) {
-    //     return find("cliente.id", clienteId).list();
-    // }
-
-    // Exemplo: Encontrar pedidos por data
+   
     public List<Pedido> findByDataPedido(LocalDate dataPedido) {
         return find("dataPedido", dataPedido).list();
     }

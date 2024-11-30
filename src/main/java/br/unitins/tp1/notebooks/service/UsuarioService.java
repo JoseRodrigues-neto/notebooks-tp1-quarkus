@@ -2,14 +2,20 @@ package br.unitins.tp1.notebooks.service;
 
 import java.util.List;
 import br.unitins.tp1.notebooks.modelo.Usuario;
+import jakarta.validation.Valid;
+import br.unitins.tp1.notebooks.dto.AlteraSenhaDTO;
+import br.unitins.tp1.notebooks.dto.AlteraUserNameDTO;
 import br.unitins.tp1.notebooks.dto.UsuarioResponseDTO;
 
 public interface UsuarioService {
-    Usuario  create(String nome, String email, String senha); 
-    void update(Long id, String nome, String email, String senha);  
-    void delete(Long id);  
-    List<UsuarioResponseDTO> findByName(String nome);
-    List<UsuarioResponseDTO> listAll();  
-    Usuario  findById(Long id);
-    Usuario findByUsernameAndSenha(String username, String senha);  
+
+  List<UsuarioResponseDTO> findByName(String nome);
+  List<UsuarioResponseDTO> listAll();
+  Usuario findById(Long id);
+  Usuario findByUsernameAndSenha(String username, String senha);
+  Usuario alteraSenha(@Valid AlteraSenhaDTO alteraSenhaDTO);
+  Usuario alteraUsername(@Valid AlteraUserNameDTO alteraUsernameDTO);
+  void alteraEmail(String novoEmail);
+  void AlteraNome(String novoNome);
+  Usuario findByUsername(String username);
 }

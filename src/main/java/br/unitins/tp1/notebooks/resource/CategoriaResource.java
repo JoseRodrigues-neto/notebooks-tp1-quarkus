@@ -13,6 +13,8 @@ import jakarta.ws.rs.core.Response;
 
 import java.util.List;
 
+import org.jboss.logging.Logger;
+
 @Path("/categorias")
 @RolesAllowed("Adm")
 @Consumes(MediaType.APPLICATION_JSON)
@@ -22,35 +24,39 @@ public class CategoriaResource {
     @Inject
     CategoriaService categoriaService;
 
-    @POST    
+    private static final Logger LOG = Logger.getLogger(FuncionarioResource.class);
+
+    @POST
     @RolesAllowed("Adm")
     public Response create(@Valid CategoriaRequestDTO dto) {
+        LOG.info("criando categoria");
         Categoria categoria = categoriaService.create(dto);
-        CategoriaResponseDTO response = CategoriaResponseDTO.valueOf(categoria); // Converte para DTO
+        CategoriaResponseDTO response = CategoriaResponseDTO.valueOf(categoria); 
         return Response.status(Response.Status.CREATED).entity(response).build();
     }
 
     @PUT
     @Path("/{id}")
     public Response update(@PathParam("id") Long id, CategoriaRequestDTO dto) {
+        LOG.info("atualizando categoria");
         Categoria categoria = categoriaService.update(id, dto);
-        CategoriaResponseDTO response = CategoriaResponseDTO.valueOf(categoria); // Converte para DTO
+        CategoriaResponseDTO response = CategoriaResponseDTO.valueOf(categoria); 
         return Response.ok(response).build();
     }
 
     @GET
     @Path("/{id}")
     public Response findById(@PathParam("id") Long id) {
+        LOG.info("buscando categoria com o Id: "+id);
         Categoria categoria = categoriaService.findById(id);
-        if (categoria == null) {
-            return Response.status(Response.Status.NOT_FOUND).build();
-        }
-        CategoriaResponseDTO response = CategoriaResponseDTO.valueOf(categoria); 
+    
+        CategoriaResponseDTO response = CategoriaResponseDTO.valueOf(categoria);
         return Response.ok(response).build();
     }
 
     @GET
     public Response findAll() {
+        LOG.info("buscando todas as categorias");
         List<CategoriaResponseDTO> categorias = categoriaService.findAll();
         return Response.ok(categorias).build();
     }
@@ -58,6 +64,7 @@ public class CategoriaResource {
     @GET
     @Path("/search/{nome}")
     public Response findByNome(@PathParam("nome") String nome) {
+        LOG.info("buscando categoria com o nome: "+nome);
         List<CategoriaResponseDTO> categorias = categoriaService.findByNome(nome);
         return Response.ok(categorias).build();
     }
@@ -65,7 +72,18 @@ public class CategoriaResource {
     @DELETE
     @Path("/{id}")
     public Response delete(@PathParam("id") Long id) {
+        LOG.info("deletando categoria com o Id: "+id);
         categoriaService.delete(id);
         return Response.noContent().build();
+    }
+
+    @PATCH
+    @Path("/{id}/descricao")
+    public Response updateDescricao(@PathParam("id") Long id, @QueryParam("descricao") String descricao) {
+        LOG.info("atualizando categoria com o Id: "+id);
+        Categoria categoria = categoriaService.updateDescricao(id, descricao);
+        CategoriaResponseDTO response = CategoriaResponseDTO.valueOf(categoria);
+        return Response.ok(response).build();
+
     }
 }

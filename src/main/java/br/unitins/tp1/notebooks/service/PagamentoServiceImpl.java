@@ -1,10 +1,10 @@
 package br.unitins.tp1.notebooks.service;
 
 import br.unitins.tp1.notebooks.modelo.Pedido;
-import br.unitins.tp1.notebooks.modelo.StatusPedido;
 import br.unitins.tp1.notebooks.repository.PedidoRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import jakarta.validation.Valid;
 import br.unitins.tp1.notebooks.modelo.FormaPagamento;
 
 @ApplicationScoped
@@ -15,7 +15,7 @@ public class PagamentoServiceImpl implements PagamentoService {
 
 
     @Override
-    public String processarPagamento(Pedido pedido, FormaPagamento formaPagamento) {
+    public String processarPagamento(Pedido pedido,@Valid FormaPagamento formaPagamento) {
         String mensagem;
 
         switch (formaPagamento) {

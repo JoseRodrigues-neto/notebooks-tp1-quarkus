@@ -4,6 +4,7 @@ import br.unitins.tp1.notebooks.dto.EspecificacaoRequestDTO;
 import br.unitins.tp1.notebooks.dto.EspecificacaoResponseDTO;
 import br.unitins.tp1.notebooks.modelo.Especificacao;
 import br.unitins.tp1.notebooks.repository.EspecificacaoRepository;
+import br.unitins.tp1.notebooks.validation.ValidationException;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
@@ -35,6 +36,7 @@ public class EspecificacaoServiceImpl implements EspecificacaoService {
     @Override
     @Transactional
     public Especificacao update(Long id, EspecificacaoRequestDTO dto) {
+        validarId(id);
         Especificacao especificacao = especificacaoRepository.findById(id);
         if (especificacao == null) {
             throw new IllegalArgumentException("Especificação não encontrada com o ID fornecido.");
@@ -50,9 +52,10 @@ public class EspecificacaoServiceImpl implements EspecificacaoService {
         return especificacao;
     }
 
-    @Override
+    @Override 
     @Transactional
     public void delete(Long id) {
+        validarId(id);
         Especificacao especificacao = especificacaoRepository.findById(id);
         if (especificacao != null) {
             especificacaoRepository.delete(especificacao);
@@ -61,6 +64,7 @@ public class EspecificacaoServiceImpl implements EspecificacaoService {
 
     @Override
     public Especificacao findById(Long id) {
+        validarId(id);
         return especificacaoRepository.findById(id);
     }
 
@@ -82,6 +86,7 @@ public class EspecificacaoServiceImpl implements EspecificacaoService {
 
     @Override
     public List<EspecificacaoResponseDTO> findByProcessador(String processador) {
+        validarNomeProcessador(processador);
         return especificacaoRepository.findByProcessador(processador).stream()
                 .map(especificacao -> new EspecificacaoResponseDTO(
                         especificacao.getId(),
@@ -94,4 +99,35 @@ public class EspecificacaoServiceImpl implements EspecificacaoService {
                 ))
                 .collect(Collectors.toList());
     }
+
+
+          private void validarId(long id) {
+            Especificacao especificacao = especificacaoRepository.findById(id);
+        if (especificacao == null) 
+            throw new ValidationException("id", "Processador com o ID fornecido não encontrado.");
+    }
+
+    private void validarNomeProcessador(String processador) {
+        Especificacao especificacao = especificacaoRepository.findByProcessadorUnico(processador);
+        if (especificacao == null) 
+            throw new ValidationException("nome", "Nome do processador fornecido não encontrado.");
+    }
+
+    @Transactional
+    public Especificacao updateMemoriaRam(Long id, String novaMemoriaRam) {
+        Especificacao especificacao = especificacaoRepository.findById(id);
+        especificacao.setMemoriaRam(novaMemoriaRam);
+        return especificacao;
+    }
+   
+    @Transactional
+    public Especificacao updateArmazenamento(Long id, String novoArmazenamento) {
+        Especificacao especificacao = especificacaoRepository.findById(id);
+        especificacao.setArmazenamento(novoArmazenamento);
+        return especificacao;
+    }
+
+  
+
+
 }

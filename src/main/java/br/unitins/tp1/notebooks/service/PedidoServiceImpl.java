@@ -1,10 +1,11 @@
 package br.unitins.tp1.notebooks.service;
 
-import br.unitins.tp1.notebooks.dto.ItemPedidoRequestDTO;
+ 
 import br.unitins.tp1.notebooks.dto.PedidoRequestDTO;
 import br.unitins.tp1.notebooks.dto.PedidoResponseDTO;
 import br.unitins.tp1.notebooks.modelo.Pedido;
 import br.unitins.tp1.notebooks.modelo.StatusPedido;
+import br.unitins.tp1.notebooks.modelo.Usuario;
 import br.unitins.tp1.notebooks.modelo.Cliente;
 import br.unitins.tp1.notebooks.modelo.ItemPedido;
 import br.unitins.tp1.notebooks.modelo.Notebook;
@@ -13,9 +14,10 @@ import br.unitins.tp1.notebooks.repository.NotebookRepository;
 import br.unitins.tp1.notebooks.repository.PedidoRepository;
 import org.eclipse.microprofile.jwt.JsonWebToken;
 import jakarta.enterprise.context.ApplicationScoped;
+import br.unitins.tp1.notebooks.validation.ValidationException;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
-
+import jakarta.validation.Valid;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -47,17 +49,17 @@ public class PedidoServiceImpl implements PedidoService {
 
    @Override
 @Transactional
-public Pedido create(PedidoRequestDTO pedidoDTO) {
+public Pedido create(@Valid PedidoRequestDTO pedidoDTO) {
     Cliente cliente = clienteRepository.findById(pedidoDTO.clienteId());
     if (cliente == null) {
-        throw new IllegalArgumentException("Cliente não encontrado com o ID: " + pedidoDTO.clienteId());
+        throw new ValidationException("cliente" ,"Cliente não encontrado");
     }
 
     // Verificar estoque antes de criar o pedido
     pedidoDTO.itens().forEach(itemDto -> {
         int estoqueDisponivel = loteService.verificarEstoque(itemDto.notebookId());
         if (estoqueDisponivel < itemDto.quantidade()) {
-            throw new IllegalArgumentException("Estoque insuficiente para o notebook com ID: " + itemDto.notebookId());
+            throw new ValidationException("Estoque" ,"Produto indiponivel no estoque");
         }
     });
 
@@ -67,7 +69,7 @@ public Pedido create(PedidoRequestDTO pedidoDTO) {
             // Buscar o notebook pelo ID para obter o preço
             Notebook notebook = notebookRepository.findById(itemDto.notebookId());
             if (notebook == null) {
-                throw new IllegalArgumentException("Notebook não encontrado com o ID: " + itemDto.notebookId());
+                throw new ValidationException("Notebook" ,"Notebook id não encontrado");
             }
 
             // Atualizando o estoque do notebook
@@ -94,6 +96,7 @@ public Pedido create(PedidoRequestDTO pedidoDTO) {
 
     @Override
     public Pedido findById(Long id) {
+        validarId(id);
         Pedido pedido = pedidoRepository.findById(id);
         if (pedido == null) {
             throw new IllegalArgumentException("Pedido não encontrado com o ID: " + id);
@@ -104,10 +107,11 @@ public Pedido create(PedidoRequestDTO pedidoDTO) {
     @Override
     @Transactional
     public void update(Long id, PedidoRequestDTO pedidoDTO) {
+        validarId(id);
         Pedido pedido = findById(id);
         Cliente cliente = clienteRepository.findById(pedidoDTO.clienteId());
         if (cliente == null) {
-            throw new IllegalArgumentException("Cliente não encontrado com o ID: " + pedidoDTO.clienteId());
+            throw new ValidationException("cliente" ,"Cliente não encontrado");
         }
 
         // Atualizando os itens do pedido
@@ -139,6 +143,7 @@ public Pedido create(PedidoRequestDTO pedidoDTO) {
     @Override
     @Transactional
     public void delete(Long id) {
+        validarId(id);
         Pedido pedido = findById(id);
 
         // Reverter o estoque ao excluir o pedido
@@ -157,6 +162,7 @@ public Pedido create(PedidoRequestDTO pedidoDTO) {
     @Override
     @Transactional
     public Pedido alterarStatusPedido(Long pedidoId, Long statusId) {
+        validarId(pedidoId);
         Pedido pedido = findById(pedidoId);
 
         StatusPedido novoStatus = StatusPedido.fromId(statusId);
@@ -183,4 +189,12 @@ public Pedido create(PedidoRequestDTO pedidoDTO) {
   
         return findByCliente(clienteRepository.findByUsername(jwt.getName()).getId());
     } 
+
+
+     private void validarId(Long id) {
+        Pedido pedido = pedidoRepository.findById(id);
+        if (pedido == null) 
+            throw new ValidationException("nome", "Pedido com o ID fornecido não encontrado.");
+    }
+
 }

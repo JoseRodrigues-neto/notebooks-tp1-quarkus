@@ -1,16 +1,19 @@
 package br.unitins.tp1.notebooks.service;
 
 import br.unitins.tp1.notebooks.dto.ItemPedidoRequestDTO;
+import br.unitins.tp1.notebooks.modelo.Funcionario;
 import br.unitins.tp1.notebooks.modelo.ItemPedido;
 import br.unitins.tp1.notebooks.modelo.Notebook;
  
 import br.unitins.tp1.notebooks.repository.ItemPedidoRepository;
 import br.unitins.tp1.notebooks.repository.NotebookRepository;
-import br.unitins.tp1.notebooks.repository.PedidoRepository;  // Importar o PedidoRepository
-
+import br.unitins.tp1.notebooks.repository.PedidoRepository;
+import br.unitins.tp1.notebooks.validation.ValidationException;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
+import jakarta.validation.Valid;
+
 import java.util.List;
 
 @ApplicationScoped
@@ -27,7 +30,7 @@ public class ItemPedidoServiceImpl implements ItemPedidoService {
 
     @Override
     @Transactional
-    public ItemPedido create(ItemPedidoRequestDTO itemPedidoDTO) {
+    public ItemPedido create(@Valid ItemPedidoRequestDTO itemPedidoDTO) {
         // Verificar se o ID do Notebook é válido
         if (itemPedidoDTO.notebookId() == null || itemPedidoDTO.notebookId() <= 0) {
             throw new IllegalArgumentException("ID do Notebook inválido");
@@ -49,6 +52,7 @@ public class ItemPedidoServiceImpl implements ItemPedidoService {
 
     @Override
     public ItemPedido findById(Long id) {
+        validarId(id);
         ItemPedido itemPedido = itemPedidoRepository.findById(id);
         if (itemPedido == null) {
             throw new IllegalArgumentException("ItemPedido não encontrado com o ID: " + id);
@@ -58,7 +62,7 @@ public class ItemPedidoServiceImpl implements ItemPedidoService {
 
     @Override
     @Transactional
-    public void update(Long id, ItemPedidoRequestDTO itemPedidoDTO) {
+    public void update(Long id,@Valid ItemPedidoRequestDTO itemPedidoDTO) {
         // Buscar o ItemPedido a ser atualizado
         ItemPedido itemPedido = findById(id);
 
@@ -83,6 +87,7 @@ public class ItemPedidoServiceImpl implements ItemPedidoService {
     @Override
     @Transactional
     public void delete(Long id) {
+        validarId(id);
         // Buscar o ItemPedido a ser excluído
         ItemPedido itemPedido = findById(id);
         itemPedidoRepository.delete(itemPedido);
@@ -92,4 +97,11 @@ public class ItemPedidoServiceImpl implements ItemPedidoService {
     public List<ItemPedido> listAll() {
         return itemPedidoRepository.listAll();
     }
+
+           private void validarId(long id) {
+            ItemPedido ItemPedido = itemPedidoRepository.findById(id);
+        if (ItemPedido == null) 
+            throw new ValidationException("id", "Funcionario com o ID fornecido não encontrado.");
+    }
+
 }

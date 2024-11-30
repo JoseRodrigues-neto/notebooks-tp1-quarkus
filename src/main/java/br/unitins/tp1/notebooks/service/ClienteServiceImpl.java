@@ -2,6 +2,7 @@ package br.unitins.tp1.notebooks.service;
 
 import br.unitins.tp1.notebooks.dto.ClienteRequestDTO;
 import br.unitins.tp1.notebooks.dto.ClienteResponseDTO;
+import br.unitins.tp1.notebooks.modelo.Categoria;
 import br.unitins.tp1.notebooks.modelo.Cliente;
 import br.unitins.tp1.notebooks.modelo.Perfil;
 import  br.unitins.tp1.notebooks.validation.ValidationException;
@@ -13,7 +14,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
- 
+import jakarta.ws.rs.NotFoundException;
 
 import java.util.List;
 
@@ -63,15 +64,10 @@ public class ClienteServiceImpl implements ClienteService {
         return cliente;
     }
     
-    private void validarCpf(String cpf) {
-        Cliente cliente = clienteRepository.findByCpf(cpf);
-        if (cliente != null) 
-            throw new ValidationException("cpf", "cpf já cadastrado");
-    }
-
+  
     @Override
     public ClienteResponseDTO findById(Long id) {
-       
+        validarId(id); 
         Cliente cliente = clienteRepository.findById(id);
         if (cliente != null) {
             return ClienteResponseDTO.valueOf(cliente);
@@ -82,7 +78,7 @@ public class ClienteServiceImpl implements ClienteService {
     @Override
     @Transactional
     public void update(Long id, ClienteRequestDTO clienteDTO) {
-        // Buscar o cliente pelo id
+        validarId(id); 
         Cliente cliente = clienteRepository.findById(id);
         if (cliente != null) {
             // Atualizar os dados do cliente
@@ -105,8 +101,12 @@ public class ClienteServiceImpl implements ClienteService {
     @Override
     @Transactional
     public void delete(Long id) {
-        // Excluir o cliente pelo id
-        clienteRepository.deleteById(id);
+       validarId(id);   
+       Cliente cliente = clienteRepository.findById(id);
+              
+       Usuario usuario = cliente.getUsuario();
+       clienteRepository.delete(cliente);
+       usuarioRepository.delete(usuario);
     }
 
     @Override
@@ -119,7 +119,7 @@ public class ClienteServiceImpl implements ClienteService {
 
     @Override
     public List<ClienteResponseDTO> findByNome(String nome) {
-        // Buscar clientes pelo nome
+        validarNome(nome);
         return clienteRepository.findByNome(nome).stream()
                 .map(ClienteResponseDTO::valueOf)
                 .toList();
@@ -128,13 +128,37 @@ public class ClienteServiceImpl implements ClienteService {
     @Override
     @Transactional
     public Cliente updateNomeImagem(Long id, String nomeImagem) {
-        Cliente Cliente = clienteRepository.findById(id);
+        Cliente cliente = clienteRepository.findById(id);
 
-        Cliente.setNomeImagem(nomeImagem);
+        cliente.setNomeImagem(nomeImagem);
         
-        return Cliente;
+        return cliente;
+    }
+   
+    private void validarCpf(String cpf) {
+        Cliente cliente = clienteRepository.findByCpf(cpf);
+        if (cliente != null) 
+            throw new ValidationException("cpf", "cpf já cadastrado");
     }
 
 
+        private void validarId(long id) {
+            Cliente cliente = clienteRepository.findById(id);
+        if (cliente == null) 
+            throw new ValidationException("id", "Cliente com o ID fornecido não encontrado.");
+    }
+
+    private void validarNome(String nome) {
+        Cliente cliente = clienteRepository.findByNomeUnico(nome);
+        if (cliente == null) 
+            throw new ValidationException("nome", "Cliente com o nome fornecido não encontrado.");
+    }
+   
+    @Override
+    public Cliente findByCpf(String cpf) {
+        Cliente cliente = clienteRepository.findByCpf(cpf);
+       
+        return cliente;
+    }
 
 }

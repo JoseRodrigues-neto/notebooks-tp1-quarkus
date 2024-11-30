@@ -6,7 +6,8 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 public enum Perfil {
 
     ADM(1, "Adm"), 
-    USER(2, "User");
+    USER(2, "User"),
+    USER_BASIC(3,"Basico");
 
     private final Integer id;
     private final String label;

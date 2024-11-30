@@ -3,9 +3,9 @@ package br.unitins.tp1.notebooks.resource;
 import br.unitins.tp1.notebooks.dto.PedidoRequestDTO;
 import br.unitins.tp1.notebooks.dto.PedidoResponseDTO;
 import br.unitins.tp1.notebooks.modelo.Pedido;
-import br.unitins.tp1.notebooks.modelo.StatusPedido;
+ 
 import br.unitins.tp1.notebooks.service.PedidoService;
-import br.unitins.tp1.notebooks.service.PedidoServiceImpl;
+ 
 import jakarta.annotation.security.RolesAllowed;
 import org.jboss.logging.Logger;
 import jakarta.inject.Inject;
@@ -26,6 +26,7 @@ public class PedidoResource {
     PedidoService pedidoService;
   
     private static final Logger LOGGER = Logger.getLogger(PedidoResource.class);
+    
     @POST
     public Response create(PedidoRequestDTO pedidoDTO) {
         try {

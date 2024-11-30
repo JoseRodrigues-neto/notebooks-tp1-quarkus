@@ -5,13 +5,16 @@ import java.util.stream.Collectors;
 
 import br.unitins.tp1.notebooks.dto.LoteRequestDTO;
 import br.unitins.tp1.notebooks.dto.LoteResponseDTO;
+import br.unitins.tp1.notebooks.modelo.Funcionario;
 import br.unitins.tp1.notebooks.modelo.Lote;
 import br.unitins.tp1.notebooks.modelo.Notebook;
 import br.unitins.tp1.notebooks.repository.LoteRepository;
 import br.unitins.tp1.notebooks.repository.NotebookRepository;
+import br.unitins.tp1.notebooks.validation.ValidationException;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
+import jakarta.validation.Valid;
 
 @ApplicationScoped
 public class LoteServiceImpl implements LoteService {
@@ -24,6 +27,7 @@ public class LoteServiceImpl implements LoteService {
 
     @Override
     public List<LoteResponseDTO> findAll() {
+      
         return loteRepository.findAll()
                 .stream()
                 .map(LoteResponseDTO::valueOf)
@@ -32,6 +36,7 @@ public class LoteServiceImpl implements LoteService {
 
     @Override
     public Lote findById(Long id) {
+        validarId(id);
         Lote lote = loteRepository.findById(id);
         if (lote == null) {
             throw new IllegalArgumentException("Lote não encontrado com o ID: " + id);
@@ -42,11 +47,9 @@ public class LoteServiceImpl implements LoteService {
     @Override
     @Transactional
     public Lote create(LoteRequestDTO dto) {
+        validarNotebookId(dto.notebookId());
         Notebook notebook = notebookRepository.findById(dto.notebookId());
-        if (notebook == null) {
-            throw new IllegalArgumentException("Notebook não encontrado com o ID: " + dto.notebookId());
-        }
-
+    
         Lote lote = new Lote(notebook, dto.quantidade());
         lote.setDataEntrada(dto.dataEntrada());
         loteRepository.persist(lote);
@@ -56,16 +59,14 @@ public class LoteServiceImpl implements LoteService {
 
     @Override
     @Transactional
-    public Lote update(Long id, LoteRequestDTO dto) {
+    public Lote update(Long id,@Valid LoteRequestDTO dto) {
+    
+        validarId(id);
+        validarNotebookId(dto.notebookId());
+
         Lote lote = loteRepository.findById(id);
-        if (lote == null) {
-            throw new IllegalArgumentException("Lote não encontrado com o ID: " + id);
-        }
 
         Notebook notebook = notebookRepository.findById(dto.notebookId());
-        if (notebook == null) {
-            throw new IllegalArgumentException("Notebook não encontrado com o ID: " + dto.notebookId());
-        }
 
         lote.setNotebook(notebook);
         lote.setQuantidade(dto.quantidade());
@@ -77,16 +78,16 @@ public class LoteServiceImpl implements LoteService {
     @Override
     @Transactional
     public void delete(Long id) {
-        if (!loteRepository.deleteById(id)) {
-            throw new IllegalArgumentException("Erro ao excluir o lote com ID: " + id);
-        }
+        validarId(id);
+        loteRepository.deleteById(id);
     }
 
     @Override
-    public int verificarEstoque(Long notebookId) {
+    public int verificarEstoque(@Valid Long notebookId) {
+        
         Notebook notebook = notebookRepository.findById(notebookId);
         if (notebook == null) {
-            throw new IllegalArgumentException("Notebook não encontrado com o ID: " + notebookId);
+            throw new ValidationException("id", "Notebook com o ID fornecido não encontrado."); 
         }
 
         return loteRepository.findByNotebookId(notebookId)
@@ -97,12 +98,9 @@ public class LoteServiceImpl implements LoteService {
 
     @Override
     @Transactional
-    public void atualizarEstoque(Long notebookId, int quantidade) {
+    public void atualizarEstoque(Long notebookId,  int quantidade) {
+        validarId(notebookId);
         List<Lote> lotes = loteRepository.findByNotebookId(notebookId);
-
-        if (lotes.isEmpty()) {
-            throw new IllegalArgumentException("Nenhum lote encontrado para o notebook com ID: " + notebookId);
-        }
 
         int restante = quantidade;
 
@@ -130,4 +128,34 @@ public class LoteServiceImpl implements LoteService {
             throw new IllegalArgumentException("Estoque insuficiente para o notebook com ID: " + notebookId);
         }
     }
+
+    @Override
+@Transactional
+public Lote atualizarQuantidade(Long id, int quantidade) {
+    validarId(id);
+
+    Lote lote = loteRepository.findById(id);
+
+    if (quantidade < 0) {
+        throw new ValidationException("quantidade", "A quantidade não pode ser negativa.");
+    }
+
+    lote.setQuantidade(quantidade);
+
+    loteRepository.persist(lote); // Atualiza o lote no banco de dados
+
+    return lote;
+}
+
+     private void validarId(long id) {
+            Lote lote = loteRepository.findById(id);
+        if (lote == null) 
+            throw new ValidationException("id", "Lote com o ID fornecido não encontrado.");
+    }
+
+    private void validarNotebookId(long id) {
+            Notebook notebook = notebookRepository.findById(id);
+        if (notebook == null) 
+            throw new ValidationException("id", "Notebook com o ID fornecido não encontrado."); 
+}
 }

@@ -15,6 +15,8 @@ import jakarta.ws.rs.core.Response;
 
 import java.util.List;
 
+import org.jboss.logging.Logger;
+
 @Path("/especificacoes")
 @RolesAllowed("Adm")
 @Produces(MediaType.APPLICATION_JSON)
@@ -23,9 +25,12 @@ public class EspecificacaoResource {
 
     @Inject
     EspecificacaoService especificacaoService;
+ 
+        private static final Logger LOG = Logger.getLogger(EspecificacaoResource.class);
 
     @POST
     public Response create(@Valid EspecificacaoRequestDTO dto) {
+        LOG.info("criando especificação");
         Especificacao especificacao = especificacaoService.create(dto);
         return Response.status(Response.Status.CREATED)
                        .entity(especificacao)
@@ -35,18 +40,16 @@ public class EspecificacaoResource {
     @PUT
     @Path("/{id}")
     public Response update(@PathParam("id") Long id, EspecificacaoRequestDTO dto) {
+        LOG.info("Atualizando especificação de Id: "+ id);
         Especificacao especificacao = especificacaoService.update(id, dto);
-        if (especificacao == null) {
-            return Response.status(Response.Status.NOT_FOUND)
-                           .entity("Especificação não encontrada com o ID fornecido.")
-                           .build();
-        }
+    
         return Response.ok(especificacao).build();
     }
 
     @DELETE
-    @Path("/{id}")
+    @Path("/{id}") 
     public Response delete(@PathParam("id") Long id) {
+        LOG.info("deletando especificação"+ id);
         especificacaoService.delete(id);
         return Response.noContent().build();
     }
@@ -54,23 +57,43 @@ public class EspecificacaoResource {
     @GET
     @Path("/{id}")
     public Response findById(@PathParam("id") Long id) {
+        LOG.info("buscando especificação de Id: "+id);
         Especificacao especificacao = especificacaoService.findById(id);
-        if (especificacao == null) {
-            return Response.status(Response.Status.NOT_FOUND)
-                           .entity("Especificação não encontrada com o ID fornecido.")
-                           .build();
-        }
+       
         return Response.ok(especificacao).build();
     }
 
     @GET
     public List<EspecificacaoResponseDTO> findAll() {
+        LOG.info("Buscando todas as especificações");
         return especificacaoService.findAll();
     }
 
     @GET
     @Path("/search/processador/{nome}")
     public List<EspecificacaoResponseDTO> findByProcessador(@PathParam("nome") String nome) {
+        LOG.info("buscando por nome do processador: "+nome);
         return especificacaoService.findByProcessador(nome);
     }
+
+
+    @PATCH
+    @Path("/{id}/memoriaRam")
+    public Response updateMemoriaRam(@PathParam("id") Long id, @QueryParam("novoValor") String novaMemoriaRam) {
+        LOG.info("atualizando memoria ram da especificação com o Id: "+ id);
+        Especificacao especificacao = especificacaoService.updateMemoriaRam(id, novaMemoriaRam);
+     
+        return Response.ok(especificacao).build();
+    }
+
+    @PATCH
+    @Path("/{id}/armazenamento")
+    public Response updateArmazenamento(@PathParam("id") Long id, @QueryParam("novoValor") String novoArmazenamento) {
+        LOG.info("atualizando armazenamento da especificação com o Id: "+ id);
+        Especificacao especificacao = especificacaoService.updateArmazenamento(id, novoArmazenamento);
+ 
+        return Response.ok(especificacao).build();
+    }
+
+ 
 }

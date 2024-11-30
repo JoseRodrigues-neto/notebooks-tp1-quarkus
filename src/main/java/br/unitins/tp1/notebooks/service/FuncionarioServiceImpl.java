@@ -2,14 +2,17 @@ package br.unitins.tp1.notebooks.service;
 
 import br.unitins.tp1.notebooks.dto.FuncionarioRequestDTO;
 import br.unitins.tp1.notebooks.dto.FuncionarioResponseDTO;
+import br.unitins.tp1.notebooks.modelo.Fabricante;
 import br.unitins.tp1.notebooks.modelo.Funcionario;
 import br.unitins.tp1.notebooks.modelo.Perfil;
 import br.unitins.tp1.notebooks.modelo.Usuario;
 import br.unitins.tp1.notebooks.repository.FuncionarioRepository;
 import br.unitins.tp1.notebooks.repository.UsuarioRepository;
+import br.unitins.tp1.notebooks.validation.ValidationException;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
+import jakarta.validation.Valid;
 import jakarta.ws.rs.NotFoundException;
 
 import java.util.List;
@@ -29,7 +32,7 @@ public class FuncionarioServiceImpl implements FuncionarioService {
 
     @Override
     @Transactional
-    public Funcionario create(FuncionarioRequestDTO funcionarioDTO) {
+    public Funcionario create(@Valid FuncionarioRequestDTO funcionarioDTO) {
         Usuario usuario = new Usuario();
         usuario.setUsername(funcionarioDTO.username());
         usuario.setNome(funcionarioDTO.nome());
@@ -56,43 +59,42 @@ public class FuncionarioServiceImpl implements FuncionarioService {
 
     @Override
     public Funcionario findById(Long id) {
+        validarId(id);
         return funcionarioRepository.findById(id);
     }
 
     @Override
-    @Transactional
-    public void update(Long id, FuncionarioRequestDTO dto) {
-        Funcionario funcionario = funcionarioRepository.findById(id);
-        if (funcionario == null) {
-            throw new  NotFoundException("Funcionário não encontrado com o ID fornecido.");
-        }
-
-        // Atualizando os campos do Funcionario
-        funcionario.setMatricula(dto.matricula());
-        funcionario.setCargo(dto.cargo());
-
-        // Atualizando o Usuario associado ao Funcionario
-        Usuario usuario = funcionario.getUsuario();
-        usuario.setUsername(dto.username());
-        usuario.setNome(dto.nome());
-        usuario.setEmail(dto.email());
-
-        // Atualizar a senha com hash se fornecida
-        if (dto.senha() != null && !dto.senha().isEmpty()) {
-            String senhaHash = hashService.getHashSenha(dto.senha());
-            usuario.setSenha(senhaHash);
-        }
+@Transactional
+public Funcionario update(Long id,@Valid FuncionarioRequestDTO dto) {
+    validarId(id);
+    Funcionario funcionario = funcionarioRepository.findById(id);
+    if (funcionario == null) {
+        throw new NotFoundException("Funcionário não encontrado com o ID fornecido.");
     }
+
+    funcionario.setMatricula(dto.matricula());
+    funcionario.setCargo(dto.cargo());
+    Usuario usuario = funcionario.getUsuario();
+    usuario.setUsername(dto.username());
+    usuario.setNome(dto.nome());
+    usuario.setEmail(dto.email());
+
+    if (dto.senha() != null && !dto.senha().isEmpty()) {
+        String senhaHash = hashService.getHashSenha(dto.senha());
+        usuario.setSenha(senhaHash);
+    }
+
+    return funcionario;
+}
+
 
     @Override
     @Transactional
     public void delete(Long id) {
+        validarId(id);
         Funcionario funcionario = funcionarioRepository.findById(id);
-        if (funcionario == null) {
-            throw new NotFoundException("Funcionário não encontrado com o ID fornecido.");
-        }
-
-        // Remover o funcionário e o usuário associado
+     
+       
         Usuario usuario = funcionario.getUsuario();
         funcionarioRepository.delete(funcionario);
         usuarioRepository.delete(usuario);
@@ -108,9 +110,28 @@ public class FuncionarioServiceImpl implements FuncionarioService {
 
     @Override
     public List<FuncionarioResponseDTO> findByName(String name) {
+        validarNome(name);
         return funcionarioRepository.findByName(name)
                 .stream()
                 .map(FuncionarioResponseDTO::valueOf)
                 .collect(Collectors.toList());
     }
+
+    public  Funcionario findByMatricula(String matricula){
+       Funcionario funcionario = funcionarioRepository.findByMatricula(matricula);
+        return funcionario;
+    }
+
+       private void validarId(long id) {
+            Funcionario funcionario = funcionarioRepository.findById(id);
+        if (funcionario == null) 
+            throw new ValidationException("id", "Funcionario com o ID fornecido não encontrado.");
+    }
+
+    private void validarNome(String nome) {
+        Funcionario funcionario = funcionarioRepository.findByNameUnico(nome);
+        if (funcionario == null) 
+            throw new ValidationException("nome", "Funcionario com o nome fornecido não encontrado.");
+    }
+    
 }

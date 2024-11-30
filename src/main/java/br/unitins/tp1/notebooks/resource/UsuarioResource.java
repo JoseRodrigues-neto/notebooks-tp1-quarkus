@@ -1,6 +1,6 @@
 // package br.unitins.tp1.notebooks.resource;
 
-// import br.unitins.tp1.notebooks.dto.UsuarioRequestDTO;
+ 
 // import br.unitins.tp1.notebooks.dto.UsuarioResponseDTO;
 // import br.unitins.tp1.notebooks.service.UsuarioService;
 // import jakarta.inject.Inject;
@@ -18,34 +18,28 @@
 //     @Inject
 //     UsuarioService usuarioService;
 
-//     @GET
-//     public List<UsuarioResponseDTO> listAll() {
-//         return usuarioService.listAll();  
-//     }
+// //     @GET
+// //     public List<UsuarioResponseDTO> listAll() {
+// //         return usuarioService.listAll();  
+// //     }
 
-//     @GET
-//     @Path("/{id}")
-//     public UsuarioResponseDTO findById(@PathParam("id") Long id) {
-//         return usuarioService.findById(id);
-//     }
+// //     @GET
+// //     @Path("/{id}")
+// //     public UsuarioResponseDTO findById(@PathParam("id") Long id) {
+// //         return usuarioService.findById(id);
+// //     }
 
-//     @POST
-//     public Response create(@Valid UsuarioRequestDTO usuarioRequestDTO) {
-//         UsuarioResponseDTO createdUsuario = usuarioService.create(usuarioRequestDTO);
-//         return Response.status(Response.Status.CREATED).entity(createdUsuario).build();
-//     }
+// //     @POST
+// //     public Response create(@Valid UsuarioRequestDTO usuarioRequestDTO) {
+// //         UsuarioResponseDTO createdUsuario = usuarioService.create(usuarioRequestDTO);
+// //         return Response.status(Response.Status.CREATED).entity(createdUsuario).build();
+// //     }
 
-//     @PUT
-//     @Path("/{id}")
-//     public Response update(@PathParam("id") Long id, @Valid UsuarioRequestDTO usuarioDTO) {
-//         usuarioService.update(id, usuarioDTO);
-//         return Response.noContent().build();
-//     }
-
-//     @DELETE
-//     @Path("/{id}")
-//     public Response delete(@PathParam("id") Long id) {
-//         usuarioService.delete(id);
-//         return Response.noContent().build();
-//     }
+// //     @PUT
+// //     @Path("/{id}")
+// //     public Response update(@PathParam("id") Long id, @Valid UsuarioRequestDTO usuarioDTO) {
+// //         usuarioService.update(id, usuarioDTO);
+// //         return Response.noContent().build();
+// //     }
+ 
 // }

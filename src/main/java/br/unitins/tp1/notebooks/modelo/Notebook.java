@@ -7,7 +7,7 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 
-@Entity
+@Entity 
 public class Notebook extends DefaultEntity {
   
      @Column(length = 100, nullable = false)
@@ -33,6 +33,8 @@ public class Notebook extends DefaultEntity {
     @ManyToOne
     @JoinColumn(name = "categoria_id", nullable = false)
     private Categoria categoria;
+
+    private String nomeImagem;
 
     public Notebook() {}
 
@@ -102,5 +104,13 @@ public class Notebook extends DefaultEntity {
 
     public void setCategoria(Categoria categoria) {
         this.categoria = categoria;
+    }
+
+    public String getNomeImagem() {
+        return nomeImagem;
+    }
+
+    public void setNomeImagem(String nomeImagem) {
+        this.nomeImagem = nomeImagem;
     }
 }

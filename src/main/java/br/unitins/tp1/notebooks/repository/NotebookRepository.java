@@ -14,6 +14,11 @@ public class NotebookRepository implements PanacheRepository<Notebook> {
         return find("modelo like ?1", "%" + modelo + "%").list();  
     }
 
+    public Notebook findByModeloUnico(String modelo) {
+        return find("modelo" + modelo ).firstResult();  
+    }
+
+
     public Notebook findById(Long id) {
         return find("id", id).firstResult();
     }

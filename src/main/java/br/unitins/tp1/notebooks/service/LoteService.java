@@ -4,20 +4,23 @@ import java.util.List;
 
 import br.unitins.tp1.notebooks.dto.LoteRequestDTO;
 import br.unitins.tp1.notebooks.modelo.Lote;
+import jakarta.validation.Valid;
 import br.unitins.tp1.notebooks.dto.LoteResponseDTO;
 
 public interface LoteService {
 
-    List<LoteResponseDTO> findAll(); // Lista todos os lotes
+    List<LoteResponseDTO> findAll();  
 
-    Lote findById(Long id); // Busca um lote por ID
+    Lote findById(Long id); 
 
-    Lote create(LoteRequestDTO dto); // Cria um novo lote
+    Lote create(@Valid LoteRequestDTO dto);  
 
-    Lote update(Long id, LoteRequestDTO dto); // Atualiza um lote existente
+    Lote update(Long id,@Valid  LoteRequestDTO dto);  
 
-    void delete(Long id); // Exclui um lote pelo ID
-    int verificarEstoque(Long notebookId);
+    void delete(Long id);  
+    int verificarEstoque(@Valid Long notebookId);
 
-     void atualizarEstoque(Long notebookId, int quantidade);
+     void atualizarEstoque(@Valid Long notebookId,  int quantidade);
+
+    Lote atualizarQuantidade(Long id, int quantidade);
 }

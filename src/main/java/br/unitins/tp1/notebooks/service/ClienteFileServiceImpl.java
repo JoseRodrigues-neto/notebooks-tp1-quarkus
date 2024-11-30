@@ -11,11 +11,13 @@ import java.util.List;
 import java.util.UUID;
 
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Named;
 
+@Named("clienteFileService")
 @ApplicationScoped
 public class ClienteFileServiceImpl implements FileService {
 
-    private final String PATH_PESSOA_FISICA = 
+    private final String PATH_CLIENTE = 
     "C:" + File.separator + 
     "Users" +
      File.separator +
@@ -39,7 +41,7 @@ public class ClienteFileServiceImpl implements FileService {
 
         // verificarTamanhoArquivo(arquivo);
 
-        Path diretorio = Paths.get(PATH_PESSOA_FISICA);
+        Path diretorio = Paths.get(PATH_CLIENTE);
         Files.createDirectories(diretorio);
 
         String mimeType = Files.probeContentType(Paths.get(nomeArquivo));
@@ -67,7 +69,7 @@ public class ClienteFileServiceImpl implements FileService {
     @Override
     public File find(String nomeArquivo) {
         // eh ideal verificar se existe para nao retornar um file vazio
-        return new File(PATH_PESSOA_FISICA + nomeArquivo);
+        return new File(PATH_CLIENTE + nomeArquivo);
     }
 
     public static void main(String[] args) {
