@@ -26,6 +26,8 @@ public class Pedido extends DefaultEntity {
     
     private Double valorTotal;
 
+    private String tipoPagamento;
+
     @Enumerated(EnumType.STRING)
     private StatusPedido status;
 
@@ -80,6 +82,12 @@ public class Pedido extends DefaultEntity {
         this.status = status;
     }
 
-     
+    public String getTipoPagamento() {
+        return tipoPagamento;
+    }
+
+    public void setTipoPagamento(String tipoPagamento) {
+        this.tipoPagamento = tipoPagamento;
+    }     
     
 }

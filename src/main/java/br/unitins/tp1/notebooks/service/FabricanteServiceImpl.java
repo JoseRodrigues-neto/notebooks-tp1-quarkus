@@ -31,6 +31,12 @@ public class FabricanteServiceImpl implements FabricanteService {
     }
 
     @Override
+    public Fabricante findByPais(String pais) {
+        Fabricante fabricante = repository.findByPais(pais);
+        return fabricante;
+    }
+
+    @Override
     @Transactional
     public Fabricante create(@Valid FabricanteRequestDTO dto) {
         Fabricante fabricante = new Fabricante();

@@ -10,9 +10,10 @@ public record PedidoResponseDTO(
         StatusPedido status,                    
        ClienteResponseDTO cliente,      
       //  List<ItemPedidoResponseDTO> itens,  
+       String tipoPagamento,
         LocalDate dataPedido,              
         Double valorTotal
-       // Status statusPedido         
+           
 ) {
  
     public static PedidoResponseDTO valueOf(Pedido pedido) {
@@ -23,6 +24,7 @@ public record PedidoResponseDTO(
                 // pedido.getItens().stream()
                 //         .map(ItemPedidoResponseDTO::valueOf)      
                 //         .toList(),
+                pedido.getTipoPagamento(),
                 pedido.getDataPedido(),
                 pedido.getValorTotal()
         );

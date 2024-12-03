@@ -6,5 +6,5 @@ import jakarta.enterprise.context.ApplicationScoped;
 
 @ApplicationScoped
 public class UsuarioBasicRepository implements PanacheRepositoryBase<UsuarioBasico, Long> {
-    // Aqui você pode adicionar consultas específicas se necessário
+   
 }

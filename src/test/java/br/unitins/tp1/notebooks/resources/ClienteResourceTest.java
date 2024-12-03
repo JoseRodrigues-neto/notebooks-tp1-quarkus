@@ -63,12 +63,10 @@ public class ClienteResourceTest {
             .statusCode(201)
             .body("id", notNullValue())
             .body("nome", is("Teste"))
-            .body("cpf", is("12345678901"))
-            .extract()
-            .path("id");
+            .body("cpf", is("12345678901"));
             
            cliente.delete(cliente.findByCpf("12345678901").getId());
-       //    user.delete(user.findByUsername("teste").getId());
+ 
     }   
  
     
@@ -82,7 +80,7 @@ public class ClienteResourceTest {
             .get("/clientes")
         .then()
             .statusCode(Response.Status.OK.getStatusCode())
-            .body("size()", greaterThan(0)); // Verifica que pelo menos um cliente foi retornado
+            .body("size()", greaterThan(0)); 
     }
 
     @Test

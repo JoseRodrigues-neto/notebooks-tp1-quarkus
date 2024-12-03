@@ -1,53 +1,31 @@
 package br.unitins.tp1.notebooks.modelo;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
+ 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
 
-@JsonFormat(shape = JsonFormat.Shape.OBJECT)
-public enum FormaPagamento {
+ 
+@Inheritance(strategy = InheritanceType.JOINED)
+@Entity
+public abstract class FormaPagamento extends DefaultEntity {
 
-    PIX(1, "Pix"),
-    CARTAO_CREDITO(2, "Cartão de Crédito"),
-    CARTAO_DEBITO(3, "Cartão de Débito"),
-    BOLETO(4, "Boleto");
+    @Column(nullable = false)
+    private double valor;
 
-    private final Integer id;
-    private final String label;
 
-    // Construtor
-    FormaPagamento(Integer id, String label) {
-        this.id = id;
-        this.label = label;
+    public FormaPagamento(){}
+
+    public FormaPagamento(double valor) {
+        this.valor = valor;
     }
 
-    // Getters
-    public Integer getId() {
-        return id;
+    public double getValor() {
+        return valor;
     }
 
-    public String getLabel() {
-        return label;
-    }
-
-    // Método estático para converter id em FormaPagamento
-    public static FormaPagamento valueOf(Integer id) {
-        if (id == null)
-            return null;
-        for (FormaPagamento forma : FormaPagamento.values()) {
-            if (forma.getId().equals(id))
-                return forma;
-        }
-        throw new IllegalArgumentException("Id inválido");
-    }
-
-    // Método estático para converter String para FormaPagamento
-    public static FormaPagamento fromString(String label) {
-        if (label == null)
-            return null;
-        for (FormaPagamento forma : FormaPagamento.values()) {
-            if (forma.getLabel().equalsIgnoreCase(label)) {
-                return forma;
-            }
-        }
-        throw new IllegalArgumentException("Forma de pagamento inválida");
+    public void setValor(double valor) {
+        this.valor = valor;
     }
 }

@@ -3,9 +3,9 @@ package br.unitins.tp1.notebooks.resource;
 import br.unitins.tp1.notebooks.dto.PedidoRequestDTO;
 import br.unitins.tp1.notebooks.dto.PedidoResponseDTO;
 import br.unitins.tp1.notebooks.modelo.Pedido;
- 
+
 import br.unitins.tp1.notebooks.service.PedidoService;
- 
+
 import jakarta.annotation.security.RolesAllowed;
 import org.jboss.logging.Logger;
 import jakarta.inject.Inject;
@@ -21,13 +21,14 @@ import java.util.stream.Collectors;
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class PedidoResource {
-  
+
     @Inject
     PedidoService pedidoService;
-  
+
     private static final Logger LOGGER = Logger.getLogger(PedidoResource.class);
-    
+
     @POST
+    @RolesAllowed("User")
     public Response create(PedidoRequestDTO pedidoDTO) {
         try {
             Pedido pedido = pedidoService.create(pedidoDTO);
@@ -61,9 +62,8 @@ public class PedidoResource {
         try {
             Pedido pedidoAtualizado = pedidoService.alterarStatusPedido(pedidoId, statusId);
             return Response.ok(Map.of(
-                "mensagem", "Status do pedido atualizado com sucesso.",
-                "statusPedido", pedidoAtualizado.getStatus().getDescricao()
-            )).build();
+                    "mensagem", "Status do pedido atualizado com sucesso.",
+                    "statusPedido", pedidoAtualizado.getStatus().getDescricao())).build();
         } catch (IllegalArgumentException e) {
             return Response.status(Response.Status.BAD_REQUEST)
                     .entity(Map.of("erro", e.getMessage()))
@@ -82,14 +82,11 @@ public class PedidoResource {
                 .map(PedidoResponseDTO::valueOf)
                 .collect(Collectors.toList());
     }
-    
-  
- 
 
     @GET
-    @Path("/search/meu") 
+    @Path("/search/meu")
     @RolesAllowed("User")
-    @Produces("application/json")   
+    @Produces("application/json")
     public Response findMyPedidos() {
         LOGGER.info("Finding my pedidos");
 
@@ -97,6 +94,3 @@ public class PedidoResource {
     }
 
 }
-
-
-

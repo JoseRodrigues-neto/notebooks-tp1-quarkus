@@ -2,7 +2,6 @@ package br.unitins.tp1.notebooks.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 
@@ -12,11 +11,9 @@ public record EspecificacaoRequestDTO(
     String processador,
 
     @NotBlank(message = "A memória RAM não pode estar vazia.")
-    @Pattern(regexp = "\\d+[ ]?(GB|MB)", message = "A memória RAM deve ser especificada no formato correto, por exemplo, '8 GB'.")
     String memoriaRam,
 
     @NotBlank(message = "O armazenamento não pode estar vazio.")
-    @Pattern(regexp = "\\d+[ ]?(GB|TB)", message = "O armazenamento deve ser especificado no formato correto, por exemplo, '512 GB'.")
     String armazenamento,
 
     @NotBlank(message = "A descrição da tela não pode estar vazia.")

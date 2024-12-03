@@ -6,9 +6,11 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 public enum StatusPedido {
 
     PENDENTE(1, "Pedido pendente"),
-    APROVADO(2, "Pedido pago"),
+    PAGO(2, "Pedido pago"),
     CANCELADO(3, "Pedido cancelado"),
-    ENTREGUE(4, "Pedido entregue");
+    ENVIADO(4,"produto enviado"),
+    ENTREGUE(5, "Pedido entregue");
+    
 
     private final int codigo;
     private final String descricao;

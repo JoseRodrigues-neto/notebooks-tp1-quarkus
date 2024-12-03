@@ -99,6 +99,13 @@ public class EspecificacaoServiceImpl implements EspecificacaoService {
                 ))
                 .collect(Collectors.toList());
     }
+  
+    public Especificacao findByNomeProcessador(String processador){
+        Especificacao especificacao = especificacaoRepository.findByProcessadorUnico(processador);
+     
+        return especificacao;
+    }
+    
 
 
           private void validarId(long id) {

@@ -4,15 +4,13 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 
 @Entity
+@Table(name = "UsuarioBasico") 
 public class UsuarioBasico extends DefaultEntity {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY) // Gera um ID automaticamente no banco de dados
-    private Long id;
 
     private String nome;
     private String email;
@@ -31,15 +29,7 @@ public class UsuarioBasico extends DefaultEntity {
         this.perfil = Perfil.USER_BASIC; // Ou o perfil que você quiser atribuir
     }
 
-    // Getters e Setters
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
+  
     public String getNome() {
         return nome;
     }

@@ -54,7 +54,7 @@ public class FabricanteResource {
         return Response.status(Response.Status.CREATED).build();
     }
 
-    @PUT
+    @PUT          
     @Path("/{id}")
     @RolesAllowed("Adm")
     public Response update(@PathParam("id") Long id, FabricanteRequestDTO fabricante) {

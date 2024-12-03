@@ -1,7 +1,6 @@
 package br.unitins.tp1.notebooks.service;
 
 import br.unitins.tp1.notebooks.dto.ItemPedidoRequestDTO;
-import br.unitins.tp1.notebooks.modelo.Funcionario;
 import br.unitins.tp1.notebooks.modelo.ItemPedido;
 import br.unitins.tp1.notebooks.modelo.Notebook;
  

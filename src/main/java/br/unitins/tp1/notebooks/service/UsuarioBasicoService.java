@@ -8,4 +8,5 @@ public interface UsuarioBasicoService {
     
     UsuarioBasico create(@Valid UsuarioBasicoRequestDTO usuarioBasicoRequestDTO);
     String login(@Valid UsuarioBasicoRequestDTO usuarioBasicoRequestDTO);
+ 
 }

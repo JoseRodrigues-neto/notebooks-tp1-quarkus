@@ -129,8 +129,16 @@ public class ClienteResource {
 
     }
 
+    @GET
+    @Path("/meu-usuario")
+    @RolesAllowed("User") 
+    public ClienteResponseDTO getAuthenticatedUser() {
+        LOG.info("Buscando os dados do usuário autenticado.");
+        return clienteService.findByMim();
+    }
+
     @PATCH
-    @Path("/altera_Senha")
+    @Path("/altera-Senha")
     @RolesAllowed("User")
     public Response alteraSenha(AlteraSenhaDTO alteraSenhaDTO) {
         LOG.debug("Alterando senha do usuário");
@@ -188,5 +196,26 @@ public class ClienteResource {
             return Response.status(Response.Status.NOT_FOUND).entity(e.getMessage()).build();
         }
     }
+
+@PATCH
+@Path("/{id}/atualizar-endereco")
+@RolesAllowed("User")
+public Response atualizarEndereco(@QueryParam("novoEndereco") String novoEndereco) {
+    
+        clienteService.atualizarEndereco(novoEndereco);
+        return Response.ok("Endereço atualizado com sucesso!").build();
+   
+}
+
+
+@PATCH
+@Path("/{id}/atualizar-telefone")
+@RolesAllowed("User")
+public Response atualizarTelefone(@QueryParam("novoTelefone") String novoTelefone) {
+
+        clienteService.atualizarTelefone(novoTelefone);
+        return Response.ok("Telefone atualizado com sucesso!").build();
+  
+}
 
 }

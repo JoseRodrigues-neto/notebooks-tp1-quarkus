@@ -1,5 +1,0 @@
-30-11-2024 13:49:20 INFO  [io.quarkus] (Quarkus Main Thread) notebooks-tp1-quarkus 1.0.0-SNAPSHOT on JVM (powered by Quarkus 3.14.3) started in 9.973s. Listening on: http://localhost:8080
-30-11-2024 13:49:20 INFO  [io.quarkus] (Quarkus Main Thread) Profile dev activated. Live Coding activated.
-30-11-2024 13:49:20 INFO  [io.quarkus] (Quarkus Main Thread) Installed features: [agroal, cdi, hibernate-orm, hibernate-orm-panache, hibernate-validator, jdbc-postgresql, narayana-jta, resteasy, resteasy-jackson, resteasy-multipart, security, smallrye-context-propagation, smallrye-jwt, smallrye-openapi, swagger-ui, vertx]
-30-11-2024 13:49:53 INFO  [br.un.tp.no.re.NotebookResource] (executor-thread-5) Iniciando criação de notebook com os dados fornecidos
-30-11-2024 13:49:54 INFO  [br.un.tp.no.re.NotebookResource] (executor-thread-5) Notebook criado com sucesso.

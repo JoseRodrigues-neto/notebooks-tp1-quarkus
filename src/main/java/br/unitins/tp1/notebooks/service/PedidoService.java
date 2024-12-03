@@ -11,7 +11,7 @@ public interface PedidoService {
 
     Pedido create(@Valid PedidoRequestDTO pedidoDTO);  
     Pedido findById(Long id);
-    void update(Long id,@Valid  PedidoRequestDTO pedidoDTO);
+   // void update(Long id,@Valid  PedidoRequestDTO pedidoDTO);
     void delete(Long id);
     List<Pedido> listAll();
     Pedido alterarStatusPedido(Long pedidoId, Long statusId);

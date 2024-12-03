@@ -2,7 +2,6 @@ package br.unitins.tp1.notebooks.service;
 
 import br.unitins.tp1.notebooks.dto.FuncionarioRequestDTO;
 import br.unitins.tp1.notebooks.dto.FuncionarioResponseDTO;
-import br.unitins.tp1.notebooks.modelo.Cliente;
 import br.unitins.tp1.notebooks.modelo.Funcionario;
 import jakarta.validation.Valid;
 

@@ -1,6 +1,5 @@
 package br.unitins.tp1.notebooks.service;
 
-
 import br.unitins.tp1.notebooks.dto.ClienteRequestDTO;
 import br.unitins.tp1.notebooks.dto.ClienteResponseDTO;
 import br.unitins.tp1.notebooks.modelo.Cliente;
@@ -17,6 +16,9 @@ public interface ClienteService {
     void delete(Long id);
     List<ClienteResponseDTO> listAll(); 
     Cliente updateNomeImagem(Long id, String nomeImagem);
-
+    Cliente atualizarEndereco(String novoEndereco);
+    Cliente atualizarTelefone(String novoTelefone);
+    ClienteResponseDTO findByMim();
+  
 }
  

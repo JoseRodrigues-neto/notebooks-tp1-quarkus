@@ -16,5 +16,5 @@ public interface EspecificacaoService {
     List<EspecificacaoResponseDTO> findAll();
     Especificacao updateMemoriaRam(Long id, String novaMemoriaRam);
     Especificacao updateArmazenamento(Long id, String novoArmazenamento);
- 
+    Especificacao findByNomeProcessador(String id);
 }

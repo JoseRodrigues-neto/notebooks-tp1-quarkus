@@ -1,70 +1,101 @@
-// package br.unitins.tp1.notebooks.resources;
+package br.unitins.tp1.notebooks.resources;
 
-// import br.unitins.tp1.notebooks.dto.FabricanteRequestDTO;
-// import io.quarkus.test.junit.QuarkusTest;
-// import io.restassured.http.ContentType;
-// import org.junit.jupiter.api.Test;
+import br.unitins.tp1.notebooks.dto.FabricanteRequestDTO;
+import br.unitins.tp1.notebooks.service.FabricanteService;
+import io.quarkus.test.junit.QuarkusTest;
+import io.quarkus.test.security.TestSecurity;
+import io.restassured.http.ContentType;
+import jakarta.inject.Inject;
 
-// import static io.restassured.RestAssured.given;
-// import static org.hamcrest.Matchers.*;
+import org.junit.jupiter.api.Test;
 
-// @QuarkusTest
-// public class FabricanteResourceTest {
+import static io.restassured.RestAssured.given;
+import static org.hamcrest.Matchers.*;
 
-//     @Test
-//     public void testListar() {
-//         given()
-//           .when().get("/fabricantes")
-//           .then()
-//              .statusCode(200)
-//              .contentType(ContentType.JSON)
-//              .body("$", not(empty()));  // Verifica se a lista não está vazia
-//     }
+@QuarkusTest
+public class FabricanteResourceTest {
 
-//     @Test
-//     public void testBuscarPorId() {
-//         Long id = 1L;  // Substitua por um ID válido no seu import.sql
+    @Inject
+    FabricanteService fabricanteService;
 
-//         given()
-//           .when().get("/fabricantes/" + id)
-//           .then()
-//              .statusCode(200)
-//              .contentType(ContentType.JSON)
-//              .body("id", equalTo(id.intValue()));
-//     }
+    @Test
+    @TestSecurity(user = "test", roles = "Adm")
+    public void testlistAll() {
+        given() 
+                .when()
+                .get("/fabricantes")
+                .then()
+                .statusCode(200)
+                .body("size()", is(notNullValue()));
+    }
 
-//     @Test
-//     public void testSalvar() {
-//         FabricanteRequestDTO novoFabricante = new FabricanteRequestDTO("Fabricante X", "Brasil");
+    @Test
+    @TestSecurity(user = "test", roles = "Adm")
+    public void testFindById() {
+        FabricanteRequestDTO dto = new FabricanteRequestDTO("Fabricante teste1", "Brasil");
+        Long id = fabricanteService.create(dto).getId();
 
-//         given()
-//           .contentType(ContentType.JSON)
-//           .body(novoFabricante)
-//           .when().post("/fabricantes")
-//           .then()
-//              .statusCode(201);
-//     }
+        given()
+                .when().get("/fabricantes/" + id)
+                .then()
+                .statusCode(200)
+                .contentType(ContentType.JSON)
+                .body("id", equalTo(id.intValue()));
+ 
+        fabricanteService.delete(fabricanteService.findById(id).getId());
+    }
 
-//     @Test
-//     public void testAtualizar() {
-//         Long id = 1L;  // Substitua por um ID válido no seu import.sql
-//         FabricanteRequestDTO fabricanteAtualizado = new FabricanteRequestDTO("Fabricante Y", "EUA");
+    @Test
+    @TestSecurity(user = "test", roles = "Adm")
+    public void testCreate() {
+        FabricanteRequestDTO dto = new FabricanteRequestDTO("Fabricante teste2", "teste");
+       
+        given()
+        .contentType(ContentType.JSON)
+        .body(dto)
+    .when()
+        .post("/fabricantes")
+    .then()
+        .statusCode(201);
 
-//         given()
-//           .contentType(ContentType.JSON)
-//           .body(fabricanteAtualizado)
-//           .when().put("/fabricantes/" + id)
-//           .then()
-//              .statusCode(200);
-//     }
+            fabricanteService.delete(fabricanteService.findByPais("teste").getId());      
 
-//     @Test
-//     public void testRemover() {
-//         Long id = 1L;  // Substitua por um ID válido no seu import.sql
+    }
 
-//         given()
-//           .when().delete("/fabricantes/" + id)
-//           .then()
-//              .statusCode(204);
-//     }
-// }
+    @Test
+    @TestSecurity(user = "test", roles = "Adm")
+    public void testeUpdate() {
+        FabricanteRequestDTO dto = new FabricanteRequestDTO("Fabricante teste3", "EUA");
+        Long id = fabricanteService.create(dto).getId();
+
+        FabricanteRequestDTO novoDto = new FabricanteRequestDTO("Fabricante X", "Brasil");
+
+        given()
+                .contentType(ContentType.JSON)
+                .body(novoDto)
+                .when().put("/fabricantes/" + id)
+                .then()
+                .statusCode(200);
+
+        fabricanteService.delete(fabricanteService.findById(id).getId());
+    }
+
+    @Test
+    @TestSecurity(user = "test", roles = "Adm")
+    public void testDelete() {
+        FabricanteRequestDTO dto = new FabricanteRequestDTO("Fabricante teste4", "EUA");
+        Long id = fabricanteService.create(dto).getId();
+
+        given()
+                .when().delete("/fabricantes/" + id)
+                .then()
+                .statusCode(204);
+
+        given()
+                .when()
+                .get("/especificacoes/{id}", id)
+                .then()
+                .statusCode(400);
+
+    }
+}

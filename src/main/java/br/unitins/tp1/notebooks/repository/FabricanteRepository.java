@@ -18,6 +18,9 @@ public List<Fabricante> findByNome(String nome) {
  public Fabricante findByNomeUnico(String nome) {
         return find("nome", nome).firstResult();
     }
-
+    
+    public Fabricante findByPais(String pais) {
+        return find("paisOrigem", pais).firstResult(); 
+    }
 }
  

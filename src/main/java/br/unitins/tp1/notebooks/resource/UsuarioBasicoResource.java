@@ -3,7 +3,6 @@ package br.unitins.tp1.notebooks.resource;
 import br.unitins.tp1.notebooks.dto.UsuarioBasicoRequestDTO;
 import br.unitins.tp1.notebooks.modelo.UsuarioBasico;
 import br.unitins.tp1.notebooks.service.UsuarioBasicoServiceImpl;
-import br.unitins.tp1.notebooks.service.UsuarioServiceImpl;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;

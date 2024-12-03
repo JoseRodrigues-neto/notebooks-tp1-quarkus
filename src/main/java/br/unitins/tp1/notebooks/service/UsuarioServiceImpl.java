@@ -64,7 +64,7 @@ public class UsuarioServiceImpl implements UsuarioService {
     public Usuario findByUsernameAndSenha(String username, String senha) {
         Usuario usuario = usuarioRepository.findByUsername(username);
         if (usuario == null || !usuario.getSenha().equals(senha)) {
-            throw new RuntimeException("Usuário ou senha incorretos.");
+            return null;
         }
         return usuario;
     }

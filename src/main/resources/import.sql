@@ -23,7 +23,7 @@ INSERT INTO categoria (nome,descricao)
 INSERT INTO Especificacao (processador, memoriaRam, armazenamento, tela, bateria, peso)
 VALUES ('Intel Core i7', '16GB', '512GB SSD', '13.3 polegadas', '5000mAh', 1.2),
        ('AMD Ryzen 9', '32GB', '1TB SSD', '14 polegadas', '6000mAh', 1.3),
-       ('Intel Core i5', '16GB', '512GB SSD', '13.3 polegadas', '5000mAh', 1.2);
+        ('teste', '16GB', '1TB SSD', '15.6 inches', '8 horas', 2.5);
 
 
  INSERT INTO Notebook (modelo, preco, garantia, fabricante_id, especificacao_id,cor,categoria_id)
@@ -38,6 +38,10 @@ INSERT INTO Usuario (perfil,email, nome,senha, username )
 VALUES ('ADM','joseneto@email.com', 'jose da Silva','59Af5ITwXq76BnsGob+0ARmVPdsW5g0Jd8UWs6n1OxhcXHgKZ/ogprO5ZLz/iJokPTBUAmNGN5Rkt+guiOj+1Q==',
 'n123');
 
+INSERT INTO UsuarioBasico (nome, email,perfil)
+VALUES ('teste','teste@example.com','USER_BASIC'); 
+ 
+
   INSERT INTO cliente (data_nascimento, usuario, cpf, endereco, telefone)
 VALUES ('2000-01-01',1,'12345678900','Rua dos Exemplos, 123' ,'(11) 98765-4321');
 
@@ -46,3 +50,6 @@ values ('1595', 'gerente',2);
 
 INSERT into Lote (dataentrada, quantidade,notebook_id)
 values ('2024-01-01', 20, 1);
+
+
+ 

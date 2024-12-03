@@ -17,4 +17,5 @@ public interface FabricanteService {
     List<FabricanteResponseDTO> findByNome(String nome);
     Fabricante updateNome(Long id, String novoNome);
     Fabricante updatePaisOrigem(Long id, String novoPaisOrigem);
+    Fabricante findByPais(String pais);
 }

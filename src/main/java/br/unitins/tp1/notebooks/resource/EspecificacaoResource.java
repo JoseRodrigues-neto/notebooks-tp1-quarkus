@@ -29,6 +29,7 @@ public class EspecificacaoResource {
         private static final Logger LOG = Logger.getLogger(EspecificacaoResource.class);
 
     @POST
+    @RolesAllowed("Adm")
     public Response create(@Valid EspecificacaoRequestDTO dto) {
         LOG.info("criando especificação");
         Especificacao especificacao = especificacaoService.create(dto);

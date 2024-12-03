@@ -3,11 +3,15 @@ package br.unitins.tp1.notebooks.resource;
 import br.unitins.tp1.notebooks.service.PagamentoService;
 import br.unitins.tp1.notebooks.service.PedidoService;
 import br.unitins.tp1.notebooks.modelo.Pedido;
+import br.unitins.tp1.notebooks.dto.CartaoDTO;
 import br.unitins.tp1.notebooks.modelo.FormaPagamento;
+import br.unitins.tp1.notebooks.modelo.PagamentoBoleto;
+import br.unitins.tp1.notebooks.modelo.PagamentoCartao;
+import br.unitins.tp1.notebooks.modelo.PagamentoPix;
 
+import java.time.YearMonth;
 import java.util.Map;
 
-import br.unitins.tp1.notebooks.dto.PagamentoRequestDTO;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.Response;
@@ -22,56 +26,42 @@ public class PagamentoResource {
     @Inject
     PedidoService pedidoService;
 
-   
     @POST
-    @Path("/pix")
-    @Produces(MediaType.APPLICATION_JSON)
-    @Consumes(MediaType.APPLICATION_JSON)
-    public Response pagarPix(PagamentoRequestDTO pagamentoRequest) {
-        return processarPagamento(pagamentoRequest, FormaPagamento.PIX);
+    @Path("/cadastra-cartao")
+    @Consumes("application/json")
+    @Produces("application/json")
+    public Response cadastraCartao(CartaoDTO pagamentoCartaoDTO) {
+        // Chama o serviço para processar o pagamento
+        pagamentoService.cadastraCartao(pagamentoCartaoDTO);
+
+        // Retorna uma resposta de sucesso
+        return Response.ok().build();
     }
 
     @POST
-    @Path("/cartao-credito")
-    @Produces(MediaType.APPLICATION_JSON)
-    @Consumes(MediaType.APPLICATION_JSON)
-    public Response pagarCartaoCredito(PagamentoRequestDTO pagamentoRequest) {
-        return processarPagamento(pagamentoRequest, FormaPagamento.CARTAO_CREDITO);
+    @Path("/pagamento-cartao/{pedidoId}")
+    @Consumes("application/json")
+    @Produces("application/json")
+    public Response processarPagamentoCartao(@PathParam("pedidoId") Long pedidoId) {
+        pagamentoService.pagamentoCartao(pedidoId);
+        return Response.ok().build();
     }
 
-   
     @POST
-    @Path("/cartao-debito")
-    @Produces(MediaType.APPLICATION_JSON)
-    @Consumes(MediaType.APPLICATION_JSON)
-    public Response pagarCartaoDebito(PagamentoRequestDTO pagamentoRequest) {
-        return processarPagamento(pagamentoRequest, FormaPagamento.CARTAO_DEBITO);
+    @Path("/pagamento-pix/{pedidoId}")
+    @Consumes("application/json")
+    @Produces("application/json")
+    public Response processarPagamentoPix(@PathParam("pedidoId") Long pedidoId) {
+        pagamentoService.pagamentoPix(pedidoId);
+        return Response.ok().build();
     }
 
-  
     @POST
-    @Path("/boleto")
-    @Produces(MediaType.APPLICATION_JSON)
-    @Consumes(MediaType.APPLICATION_JSON)
-    public Response pagarBoleto(PagamentoRequestDTO pagamentoRequest) {
-        return processarPagamento(pagamentoRequest, FormaPagamento.BOLETO);
-    }
-
-   
-    private Response processarPagamento(PagamentoRequestDTO pagamentoRequest, FormaPagamento formaPagamento) {
-        try {
-            // Recupera o pedido a partir do ID fornecido no DTO
-            Pedido pedido = pedidoService.findById(pagamentoRequest.pedidoId());
-            // Processa o pagamento através do serviço de pagamento
-            String mensagem = pagamentoService.processarPagamento(pedido, formaPagamento);
-
-            // Retorna a resposta com sucesso
-            return Response.ok(Map.of("mensagem", mensagem)).build();
-        } catch (Exception e) {
-            // Se ocorrer algum erro (pedido não encontrado, etc.), retorna erro 400
-            return Response.status(Response.Status.BAD_REQUEST)
-                    .entity(Map.of("erro", e.getMessage()))
-                    .build();
-        }
+    @Path("/pagamento-boleto/{pedidoId}")
+    @Consumes("application/json")
+    @Produces("application/json")
+    public Response processarPagamentoBoleto(@PathParam("pedidoId") Long pedidoId) {
+        pagamentoService.pagamentoBoleto(pedidoId);
+        return Response.ok().build();
     }
 }
