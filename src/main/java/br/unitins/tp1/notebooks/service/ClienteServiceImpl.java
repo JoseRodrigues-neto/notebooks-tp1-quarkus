@@ -12,7 +12,6 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
-import jakarta.ws.rs.NotFoundException;
 
 import java.util.List;
 
@@ -27,45 +26,38 @@ public class ClienteServiceImpl implements ClienteService {
     @Inject
     UsuarioRepository usuarioRepository;
 
-    
     @Inject
     JsonWebToken jwt;
 
-
     @Inject
-    HashService hashService;
+    HashService hashService; 
 
     @Override
     @Transactional
     public Cliente create(@Valid ClienteRequestDTO clienteDTO) {
 
-        validarCpf(clienteDTO.cpf());
-        // Criar um novo Usuario e setar os atributos
+       validarCpf(clienteDTO.cpf());
+
         Usuario usuario = new Usuario();
         usuario.setUsername(clienteDTO.username());
         usuario.setNome(clienteDTO.nome());
         usuario.setEmail(clienteDTO.email());
 
         usuario.setPerfil(Perfil.USER);
-        // Realizar o hash da senha antes de persistir
         String senhaHash = hashService.getHashSenha(clienteDTO.senha());
-        usuario.setSenha(senhaHash); // Agora a senha está hashada
+        usuario.setSenha(senhaHash);
 
-        // Persistir o Usuario no banco de dados primeiro
         usuarioRepository.persist(usuario);
 
-        // Criar o Cliente e associar o Usuario a ele
         Cliente cliente = new Cliente();
         cliente.setCpf(clienteDTO.cpf());
         cliente.setTelefone(clienteDTO.telefone());
         cliente.setEndereco(clienteDTO.endereco());
         cliente.setDataNascimento(clienteDTO.dataNascimento());
-        cliente.setUsuario(usuario); // Associar o Usuario ao Cliente
+        cliente.setUsuario(usuario);
 
-        // Persistir o Cliente no banco de dados
         clienteRepository.persist(cliente);
 
-        // Retornar o cliente recém-criado
         return cliente;
     }
 
@@ -73,38 +65,49 @@ public class ClienteServiceImpl implements ClienteService {
     public ClienteResponseDTO findById(Long id) {
         validarId(id);
         Cliente cliente = clienteRepository.findById(id);
-        if (cliente != null) {
-            return ClienteResponseDTO.valueOf(cliente);
-        }
-        return null;
+
+        return ClienteResponseDTO.valueOf(cliente);
+
     }
 
     @Override
     @Transactional
     public void update(Long id, ClienteRequestDTO clienteDTO) {
+
+        String usernameAutenticado = jwt.getName();
+        Cliente verificarCliente = clienteRepository.findByUsername(usernameAutenticado);
+
+        if (!verificarCliente.getId().equals(id)) {
+            throw new ValidationException("Id", "passe seu propio Id");
+        }
+    
         validarId(id);
         Cliente cliente = clienteRepository.findById(id);
-        if (cliente != null) {
-            // Atualizar os dados do cliente
-            cliente.setCpf(clienteDTO.cpf());
-            cliente.setTelefone(clienteDTO.telefone());
-            cliente.setEndereco(clienteDTO.endereco());
-            cliente.setDataNascimento(clienteDTO.dataNascimento());
 
-            // Atualizar os dados do usuário associado
-            cliente.getUsuario().setUsername(clienteDTO.username());
-            cliente.getUsuario().setNome(clienteDTO.nome());
-            cliente.getUsuario().setEmail(clienteDTO.email());
-            cliente.getUsuario().setSenha(clienteDTO.senha()); // Certifique-se de que a senha está sendo hashada
+        cliente.setCpf(clienteDTO.cpf());
+        cliente.setTelefone(clienteDTO.telefone());
+        cliente.setEndereco(clienteDTO.endereco());
+        cliente.setDataNascimento(clienteDTO.dataNascimento());
 
-            // Persistir as alterações
-            clienteRepository.persist(cliente);
-        }
+        cliente.getUsuario().setUsername(clienteDTO.username());
+        cliente.getUsuario().setNome(clienteDTO.nome());
+        cliente.getUsuario().setEmail(clienteDTO.email());
+        cliente.getUsuario().setSenha(clienteDTO.senha());
+
+        clienteRepository.persist(cliente);
     }
 
     @Override
     @Transactional
     public void delete(Long id) {
+        String usernameAutenticado = jwt.getName();
+        Cliente verificarCliente = clienteRepository.findByUsername(usernameAutenticado);
+
+        if (!verificarCliente.getId().equals(id)) {
+            throw new ValidationException("Id", "passe seu propio Id");
+        }
+    
+
         validarId(id);
         Cliente cliente = clienteRepository.findById(id);
 
@@ -114,8 +117,20 @@ public class ClienteServiceImpl implements ClienteService {
     }
 
     @Override
+    @Transactional
+    public void deleteTest(Long id) {
+      
+        validarId(id);
+        Cliente cliente = clienteRepository.findById(id);
+
+        Usuario usuario = cliente.getUsuario();
+        clienteRepository.delete(cliente);
+        usuarioRepository.delete(usuario);
+    }
+
+
+    @Override
     public List<ClienteResponseDTO> listAll() {
-        // Listar todos os clientes e mapear para o DTO
         return clienteRepository.findAll().list().stream()
                 .map(ClienteResponseDTO::valueOf)
                 .toList();
@@ -140,40 +155,35 @@ public class ClienteServiceImpl implements ClienteService {
     }
 
     @Override
-@Transactional
-public ClienteResponseDTO findByMim() {
-    String usernameAutenticado = jwt.getName();
-    Cliente cliente = clienteRepository.findByUsername(usernameAutenticado);
-    
-    if (cliente == null) {
-        throw new ValidationException("cliente", "cliente passado e null");
-    }
-    
-    return ClienteResponseDTO.valueOf(cliente); 
-}
+    @Transactional
+    public ClienteResponseDTO findByMim() {
+        String usernameAutenticado = jwt.getName();
+        Cliente cliente = clienteRepository.findByUsername(usernameAutenticado);
 
- 
+        if (cliente == null) {
+            throw new ValidationException("cliente", "cliente passado e null");
+        }
+
+        return ClienteResponseDTO.valueOf(cliente);
+    }
 
     @Override
     @Transactional
     public Cliente atualizarEndereco(String novoEndereco) {
-    
+
         String usernameAutenticado = jwt.getName();
-        Cliente cliente = clienteRepository.findByUsername(usernameAutenticado); 
-       
+        Cliente cliente = clienteRepository.findByUsername(usernameAutenticado);
+
         cliente.setEndereco(novoEndereco);
         return cliente;
     }
- 
-    // Buscar o cliente pelo id
- 
 
     @Override
     @Transactional
     public Cliente atualizarTelefone(String novoTelefone) {
 
         String usernameAutenticado = jwt.getName();
-        Cliente cliente = clienteRepository.findByUsername(usernameAutenticado); 
+        Cliente cliente = clienteRepository.findByUsername(usernameAutenticado);
 
         cliente.setTelefone(novoTelefone);
         return cliente;

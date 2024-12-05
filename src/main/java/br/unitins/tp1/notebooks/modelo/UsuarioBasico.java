@@ -13,20 +13,22 @@ import jakarta.persistence.GenerationType;
 public class UsuarioBasico extends DefaultEntity {
 
     private String nome;
+
+    
     private String email;
 
-    @Enumerated(EnumType.STRING) // Garantir que o valor da enum será armazenado como uma string no banco
+    @Enumerated(EnumType.STRING)  
     private Perfil perfil;
 
-    // Construtor padrão é necessário para o JPA
+ 
     public UsuarioBasico() {
     }
 
-    // Construtor com nome e email
+  
     public UsuarioBasico(String nome, String email) {
         this.nome = nome;
         this.email = email;
-        this.perfil = Perfil.USER_BASIC; // Ou o perfil que você quiser atribuir
+        this.perfil = Perfil.USER_BASIC;  
     }
 
   

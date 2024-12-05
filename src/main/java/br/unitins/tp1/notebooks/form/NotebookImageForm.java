@@ -13,8 +13,6 @@ public class NotebookImageForm {
     @PartType("application/octet-stream")
     private byte[] imagem;
 
-
-
     public String getNomeImagem() {
         return nomeImagem;
     }

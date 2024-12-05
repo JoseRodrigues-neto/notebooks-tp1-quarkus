@@ -1,5 +1,8 @@
 package br.unitins.tp1.notebooks.service;
 
+import java.util.List;
+import java.util.UUID;
+
 import br.unitins.tp1.notebooks.dto.UsuarioBasicoRequestDTO;
  
 import br.unitins.tp1.notebooks.modelo.Perfil;
@@ -28,7 +31,9 @@ public class UsuarioBasicoServiceImpl implements UsuarioBasicoService {
     
         return usuarioBasico;
     }
-
+  
+     @Override
+     @Transactional
     public String login(UsuarioBasicoRequestDTO usuarioBasicoRequestDTO) {
 
 
@@ -36,11 +41,16 @@ public class UsuarioBasicoServiceImpl implements UsuarioBasicoService {
 
         if (usuario != null && usuario.getEmail().equals(usuarioBasicoRequestDTO.email())) {
          
-            return Jwt.issuer("example.com")
-                      .upn(usuarioBasicoRequestDTO.email()) 
-                      .claim("perfil", usuario.getPerfil().toString())  
-                      .expiresIn(3600)  
-                      .sign();  
+            return Jwt.issuer("unitins-jwt")
+            .upn(usuarioBasicoRequestDTO.email())  
+            .claim("perfil", usuario.getPerfil().toString())  
+            .claim("sub", usuarioBasicoRequestDTO.email())  
+            .claim("groups", List.of("Basico"))  
+            .expiresIn(3600) 
+            .claim("iat", System.currentTimeMillis() / 1000)  
+            .claim("jti", UUID.randomUUID().toString())  
+            .sign(); 
+  
         }
         return null;
     }

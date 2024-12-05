@@ -39,6 +39,7 @@ public class EspecificacaoResource {
     }
 
     @PUT
+    @RolesAllowed("Adm")
     @Path("/{id}")
     public Response update(@PathParam("id") Long id, EspecificacaoRequestDTO dto) {
         LOG.info("Atualizando especificação de Id: "+ id);
@@ -48,6 +49,7 @@ public class EspecificacaoResource {
     }
 
     @DELETE
+    @RolesAllowed("Adm")
     @Path("/{id}") 
     public Response delete(@PathParam("id") Long id) {
         LOG.info("deletando especificação"+ id);

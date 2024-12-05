@@ -24,6 +24,7 @@ public class NotebookResourceTest {
     NotebookService notebookService;
 
     @Test
+    @TestSecurity(user = "test", roles = "Adm")
     public void testFindbyAllNotebooks() {
         given()
                 .when().get("/notebooks")

@@ -11,7 +11,10 @@ public class LoteRepository implements PanacheRepository<Lote> {
     public Lote findById(Long id) {
         return find("id", id).firstResult();
     }
-
+    public boolean existeNotebookId(Long notebookId) {
+        return find("notebook.id", notebookId).firstResult() != null;
+    }
+    
     public List<Lote> findByNotebookId(Long notebookId) {
         return list("notebook.id", notebookId);
     }

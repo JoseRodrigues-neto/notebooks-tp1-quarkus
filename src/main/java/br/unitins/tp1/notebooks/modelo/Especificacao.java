@@ -73,8 +73,8 @@ public class Especificacao extends DefaultEntity {
         this.peso = peso;
     }
 
-    public String getDetalhes() {
-        return String.format("Processador: %s, RAM: %s, Armazenamento: %s, Tela: %s, Bateria: %s, Peso: %.2f kg",
-                processador, memoriaRam, armazenamento, tela, bateria, peso);
-    }
+    // public String getDetalhes() {
+    //     return String.format("Processador: %s, RAM: %s, Armazenamento: %s, Tela: %s, Bateria: %s, Peso: %.2f kg",
+    //             processador, memoriaRam, armazenamento, tela, bateria, peso);
+    // }
 }

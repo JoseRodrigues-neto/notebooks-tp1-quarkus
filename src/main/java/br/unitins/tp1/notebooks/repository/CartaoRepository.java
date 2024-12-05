@@ -7,5 +7,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 @ApplicationScoped
 public class  CartaoRepository implements PanacheRepository<PagamentoCartao> {
 
-    
+    public boolean findByClienteId(Long clienteId) {
+        return find("id", clienteId).count() > 0;
+    }
 }

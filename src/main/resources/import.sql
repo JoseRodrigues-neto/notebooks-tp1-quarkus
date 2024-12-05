@@ -27,29 +27,34 @@ VALUES ('Intel Core i7', '16GB', '512GB SSD', '13.3 polegadas', '5000mAh', 1.2),
 
 
  INSERT INTO Notebook (modelo, preco, garantia, fabricante_id, especificacao_id,cor,categoria_id)
- VALUES ('Ideapad I1',2500,2,2,1,'PRETO',1);   
+ VALUES ('Ideapad I1',2500,2,2,1,'PRETO',1), ('Dell Inspiron',5000,2,1,1,'PRETO',1);    
 
  
 INSERT INTO Usuario (perfil,email, nome,senha, username ) 
 VALUES ('USER','joaosilva@email.com', 'João da Silva','59Af5ITwXq76BnsGob+0ARmVPdsW5g0Jd8UWs6n1OxhcXHgKZ/ogprO5ZLz/iJokPTBUAmNGN5Rkt+guiOj+1Q==',
-'j123');
+'j123'),('USER','teste@email.com', 'jonh test','59Af5ITwXq76BnsGob+0ARmVPdsW5g0Jd8UWs6n1OxhcXHgKZ/ogprO5ZLz/iJokPTBUAmNGN5Rkt+guiOj+1Q==',
+'t123');
 
 INSERT INTO Usuario (perfil,email, nome,senha, username ) 
 VALUES ('ADM','joseneto@email.com', 'jose da Silva','59Af5ITwXq76BnsGob+0ARmVPdsW5g0Jd8UWs6n1OxhcXHgKZ/ogprO5ZLz/iJokPTBUAmNGN5Rkt+guiOj+1Q==',
-'n123');
+'n123'),('ADM','administrador@email.com', 'admim','59Af5ITwXq76BnsGob+0ARmVPdsW5g0Jd8UWs6n1OxhcXHgKZ/ogprO5ZLz/iJokPTBUAmNGN5Rkt+guiOj+1Q==',
+'a123');
 
 INSERT INTO UsuarioBasico (nome, email,perfil)
 VALUES ('teste','teste@example.com','USER_BASIC'); 
  
 
-  INSERT INTO cliente (data_nascimento, usuario, cpf, endereco, telefone)
-VALUES ('2000-01-01',1,'12345678900','Rua dos Exemplos, 123' ,'(11) 98765-4321');
+INSERT INTO cliente (data_nascimento, usuario, cpf, endereco, telefone)
+VALUES ('2000-01-01',1,'12345678900','palmas, 103 norte, Rua dos Exemplos, 123' ,'(63) 98765-4321'),
+       ('2000-01-01',2,'00000000000','palmas, 103 sul, Rua dos Exemplos, 123' ,'(63) 97394-8492');
 
 INSERT INTO funcionario (matricula, cargo, usuario)
-values ('1595', 'gerente',2);
+values ('1595', 'gerente',3),
+       ('1702', 'gerente',4);
 
 INSERT into Lote (dataentrada, quantidade,notebook_id)
-values ('2024-01-01', 20, 1);
+values ('2024-01-01', 100, 1),
+       ('2024-01-01', 100, 2);
 
 
  

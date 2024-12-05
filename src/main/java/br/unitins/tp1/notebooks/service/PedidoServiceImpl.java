@@ -1,5 +1,6 @@
 package br.unitins.tp1.notebooks.service;
 
+import br.unitins.tp1.notebooks.dto.ItemPedidoRequestDTO;
 import br.unitins.tp1.notebooks.dto.PedidoRequestDTO;
 import br.unitins.tp1.notebooks.dto.PedidoResponseDTO;
 import br.unitins.tp1.notebooks.modelo.Pedido;
@@ -41,48 +42,52 @@ public class PedidoServiceImpl implements PedidoService {
     @Inject
     JsonWebToken jwt;
 
+
     @Override
     @Transactional
     public Pedido create(@Valid PedidoRequestDTO pedidoDTO) {
-
         String usernameAutenticado = jwt.getName();
         Cliente cliente = clienteRepository.findByUsername(usernameAutenticado);
         if (cliente == null) {
             throw new ValidationException("cliente", "Cliente não encontrado");
         }
-
-        pedidoDTO.itens().forEach(itemDto -> {
-            int estoqueDisponivel = loteService.verificarEstoque(itemDto.notebookId());
-            if (estoqueDisponivel < itemDto.quantidade()) {
-                throw new ValidationException("Estoque", "Produto indiponivel no estoque");
-            }
-        });
-
-        List<ItemPedido> itens = pedidoDTO.itens().stream()
-                .map(itemDto -> {
-                    Notebook notebook = notebookRepository.findById(itemDto.notebookId());
-                    if (notebook == null) {
-                        throw new ValidationException("Notebook", "Notebook id não encontrado");
-                    }
-
-                    // Atualizando o estoque do notebook
-                    loteService.atualizarEstoque(itemDto.notebookId(), itemDto.quantidade());
-
-                    ItemPedido itemPedido = itemPedidoService.create(itemDto);
-                    itemPedido.setPreco(notebook.getPreco());
-
-                    return itemPedido;
-                })
-                .collect(Collectors.toList());
-
+      
+        List<ItemPedido> itens = processarItens(pedidoDTO.itens());
+    
         Pedido pedido = new Pedido(cliente, itens);
         pedido.setValorTotal(itens.stream()
                 .mapToDouble(item -> item.getPreco() * item.getQuantidade())
                 .sum());
-
+    
         pedidoRepository.persist(pedido);
         return pedido;
     }
+   
+    
+    private List<ItemPedido> processarItens(List<ItemPedidoRequestDTO> itensDTO) {
+    return itensDTO.stream()
+            .map(itemDto -> {
+               
+                int estoqueDisponivel = loteService.verificarEstoque(itemDto.notebookId());
+                if (estoqueDisponivel < itemDto.quantidade()) {
+                    throw new ValidationException("Quantidade", "Produto indisponível no estoque");
+                }
+ 
+                Notebook notebook = notebookRepository.findById(itemDto.notebookId());
+                if (notebook == null) {
+                    throw new ValidationException("Notebook", "Notebook id não encontrado");
+                }
+ 
+                loteService.atualizarEstoque(itemDto.notebookId(), itemDto.quantidade());
+
+       
+                ItemPedido itemPedido = itemPedidoService.create(itemDto);
+                itemPedido.setPreco(notebook.getPreco());
+
+                return itemPedido;
+            })
+            .collect(Collectors.toList());
+}
 
     @Override
     public Pedido findById(Long id) {
@@ -94,42 +99,16 @@ public class PedidoServiceImpl implements PedidoService {
         return pedido;
     }
 
-    // @Override
-    // @Transactional
-    // public void update(Long id, PedidoRequestDTO pedidoDTO) {
-    //     validarId(id);
-    //     Pedido pedido = findById(id);
-    //     Cliente cliente = clienteRepository.findById(pedidoDTO.clienteId());
-    //     if (cliente == null) {
-    //         throw new ValidationException("cliente", "Cliente não encontrado");
-    //     }
-
-    //     // Atualizando os itens do pedido
-    //     List<ItemPedido> novosItens = pedidoDTO.itens().stream()
-    //             .map(itemDto -> {
-    //                 // Reverter o estoque antigo
-    //                 ItemPedido itemExistente = pedido.getItens().stream()
-    //                         .filter(item -> item.getNotebook().getId().equals(itemDto.notebookId()))
-    //                         .findFirst()
-    //                         .orElse(null);
-
-    //                 if (itemExistente != null) {
-    //                     loteService.atualizarEstoque(itemDto.notebookId(), -itemExistente.getQuantidade());
-    //                 }
-
-    //                 // Atualizar o estoque com os novos valores
-    //                 loteService.atualizarEstoque(itemDto.notebookId(), itemDto.quantidade());
-    //                 return itemPedidoService.create(itemDto);
-    //             })
-    //             .collect(Collectors.toList());
-
-    //     pedido.setCliente(cliente);
-    //     pedido.setItens(novosItens);
-    //     pedido.setValorTotal(novosItens.stream()
-    //             .mapToDouble(item -> item.getPreco() * item.getQuantidade())
-    //             .sum());
-    // }
-
+    @Override
+    public Pedido findByPedido(Long id) {
+        validarId(id);
+        Pedido pedido = pedidoRepository.findById(id);
+        if (pedido == null) {
+            throw new IllegalArgumentException("Pedido não encontrado com o ID: " + id);
+        }
+        return pedido;
+    }
+ 
     @Override
     @Transactional
     public void delete(Long id) {
@@ -161,11 +140,11 @@ public class PedidoServiceImpl implements PedidoService {
         }
 
         pedido.setStatus(novoStatus);
-        pedidoRepository.persist(pedido); // Atualiza o pedido no banco
+        pedidoRepository.persist(pedido);  
         return pedido;
     }
 
-    // metodos pessoais
+    
     @Override
     public List<PedidoResponseDTO> findByCliente(Long idCliente) {
         return pedidoRepository.findByClienteId(idCliente).stream()
@@ -182,7 +161,40 @@ public class PedidoServiceImpl implements PedidoService {
     private void validarId(Long id) {
         Pedido pedido = pedidoRepository.findById(id);
         if (pedido == null)
-            throw new ValidationException("nome", "Pedido com o ID fornecido não encontrado.");
+            throw new ValidationException("ID", "Pedido com o ID fornecido não encontrado.");
     }
+
+    @Override
+@Transactional
+public Pedido cancelarPedido(Long pedidoId) {
+    validarId(pedidoId);
+    
+    Pedido pedido = findById(pedidoId);
+ 
+    String usernameAutenticado = jwt.getName(); 
+
+    if (!pedido.getCliente().getUsuario().getUsername().equals(usernameAutenticado)) {
+        throw new ValidationException("Id", "Pedido não encontrado.");
+    }
+
+    if (pedido.getStatus() == StatusPedido.CANCELADO) {
+        throw new ValidationException("Status", "O pedido já foi cancelado.");
+    }
+    if (pedido.getStatus() == StatusPedido.PAGO || pedido.getStatus() == StatusPedido.ENTREGUE ||  pedido.getStatus() == StatusPedido.ENVIADO) {
+        throw new ValidationException("Status", "Não é possível cancelar um pedido concluído.");
+    }
+
+ 
+    pedido.setStatus(StatusPedido.CANCELADO);
+ 
+    pedido.getItens().forEach(item -> {
+        loteService.atualizarEstoque(item.getNotebook().getId(), -item.getQuantidade());
+    });
+ 
+    pedidoRepository.persist(pedido);
+
+    return pedido;
+}
+
 
 }

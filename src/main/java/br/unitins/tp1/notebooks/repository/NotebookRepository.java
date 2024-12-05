@@ -13,7 +13,8 @@ public class NotebookRepository implements PanacheRepository<Notebook> {
     public List<Notebook> findByModelo(String modelo) {
         return find("modelo like ?1", "%" + modelo + "%").list();  
     }
-
+   
+  
     public Notebook findByModeloUnico(String modelo) {
         return find("modelo" + modelo ).firstResult();  
     }

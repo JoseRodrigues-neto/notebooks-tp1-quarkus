@@ -8,13 +8,13 @@ import java.util.List;
 
 public interface ItemPedidoService {
 
-    ItemPedido create(@Valid ItemPedidoRequestDTO itemPedidoDTO); // Cria um novo ItemPedido
+    ItemPedido create(@Valid ItemPedidoRequestDTO itemPedidoDTO);  
 
-    ItemPedido findById(Long id); // Busca um ItemPedido pelo ID
+    ItemPedido findById(Long id); 
 
-    void update(Long id,@Valid  ItemPedidoRequestDTO itemPedidoDTO); // Atualiza um ItemPedido existente
+    void update(Long id,@Valid  ItemPedidoRequestDTO itemPedidoDTO);  
 
-    void delete(Long id); // Remove um ItemPedido pelo ID
+    void delete(Long id);  
 
-    List<ItemPedido> listAll(); // Lista todos os ItemPedidos
+    List<ItemPedido> listAll();  
 }

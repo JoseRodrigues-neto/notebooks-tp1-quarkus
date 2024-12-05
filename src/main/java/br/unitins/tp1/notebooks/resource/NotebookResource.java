@@ -6,6 +6,7 @@ import br.unitins.tp1.notebooks.form.NotebookImageForm;
 import br.unitins.tp1.notebooks.service.FileService;
 import br.unitins.tp1.notebooks.modelo.Notebook;
 import br.unitins.tp1.notebooks.service.NotebookService;
+import jakarta.annotation.security.PermitAll;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
@@ -37,7 +38,7 @@ public class NotebookResource {
  
     @POST 
     @RolesAllowed("Adm")
-    public Response create(@Valid NotebookRequestDTO dto) {
+    public Response create(NotebookRequestDTO dto) {
         LOG.info("Iniciando criação de notebook com os dados fornecidos");
         NotebookResponseDTO notebook = NotebookResponseDTO.valueOf(notebookService.create(dto));
         LOG.info("Notebook criado com sucesso.");
@@ -70,6 +71,7 @@ public class NotebookResource {
     }
 
     @GET
+    @RolesAllowed({"Adm", "User", "Basico"})
     @Path("/{id}")
     public Response findById(@PathParam("id") Long id) {
         LOG.info("Buscando notebook com ID: " + id);
@@ -79,6 +81,7 @@ public class NotebookResource {
     }
 
     @GET
+    @RolesAllowed({"Adm", "User","Basico"})
     public Response findAll() {
         LOG.info("Buscando notebooks");
         List<NotebookResponseDTO> notebooks = notebookService.findAll();
@@ -86,6 +89,7 @@ public class NotebookResource {
     }
 
     @GET
+    @RolesAllowed({"Adm", "User", "Basico"})
     @Path("/search")
     public Response findByModelo(@QueryParam("modelo") String modelo) {
         LOG.info("Buscando modelo notebook");
@@ -99,6 +103,7 @@ public class NotebookResource {
     }
 
     @PATCH
+    @RolesAllowed("Adm")
     @Path("/{id}/upload/imagem")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     public Response uploadImage(@PathParam("id") Long id, @MultipartForm NotebookImageForm form) {
@@ -115,8 +120,10 @@ public class NotebookResource {
     }
 
     @GET
+    @RolesAllowed({"Adm","User"})
     @Path("/download/imagem/{nomeImagem}")
     @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_OCTET_STREAM) 
     public Response downloadImage(@PathParam("nomeImagem") String nomeImagem) {
         LOG.info("download de imagem: " + nomeImagem);
         ResponseBuilder response = Response.ok(notebookFileService.find(nomeImagem));

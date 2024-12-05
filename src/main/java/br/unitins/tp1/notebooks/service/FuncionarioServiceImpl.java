@@ -93,7 +93,6 @@ public Funcionario update(Long id,@Valid FuncionarioRequestDTO dto) {
         validarId(id);
         Funcionario funcionario = funcionarioRepository.findById(id);
      
-       
         Usuario usuario = funcionario.getUsuario();
         funcionarioRepository.delete(funcionario);
         usuarioRepository.delete(usuario);
@@ -109,7 +108,7 @@ public Funcionario update(Long id,@Valid FuncionarioRequestDTO dto) {
 
     @Override
     public List<FuncionarioResponseDTO> findByName(String name) {
-        validarNome(name);
+       validarNome(name);
         return funcionarioRepository.findByName(name)
                 .stream()
                 .map(FuncionarioResponseDTO::valueOf)
@@ -128,7 +127,7 @@ public Funcionario update(Long id,@Valid FuncionarioRequestDTO dto) {
     }
 
     private void validarNome(String nome) {
-        Funcionario funcionario = funcionarioRepository.findByNameUnico(nome);
+        List<Funcionario> funcionario = funcionarioRepository.findByName(nome);
         if (funcionario == null) 
             throw new ValidationException("nome", "Funcionario com o nome fornecido não encontrado.");
     }

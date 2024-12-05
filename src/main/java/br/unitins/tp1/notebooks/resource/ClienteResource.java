@@ -47,6 +47,7 @@ public class ClienteResource {
     public FileService clienteFileService;
 
     @GET
+    @RolesAllowed("Adm")
     public List<ClienteResponseDTO> listAll() {
         LOG.info("Executando listAll() - Listando todos os clientes.");
         LOG.debug("Iniciando listagem de todos os clientes.");
@@ -55,6 +56,7 @@ public class ClienteResource {
     }
 
     @GET
+    @RolesAllowed("Adm")
     @Path("/{id}")
     public ClienteResponseDTO findById(@PathParam("id") Long id) {
         LOG.info("Execucao do metodo findById. Id: " + id);
@@ -63,6 +65,7 @@ public class ClienteResource {
     }
 
     @POST
+    @RolesAllowed({"User","Basico","Adm"})
     public Response create(@Valid ClienteRequestDTO clienteDTO) {
         LOG.debug("Criando um novo cliente os dados cadastrados");
         LOG.info("cadastro de cliente.");
@@ -75,6 +78,7 @@ public class ClienteResource {
     }
 
     @GET
+    @RolesAllowed("Adm")
     @Path("/search/{nome}")
     public List<ClienteResponseDTO> findByNome(@PathParam("nome") String nome) {
         LOG.info("Buscando clientes com o nome: " + nome);
@@ -82,6 +86,7 @@ public class ClienteResource {
     }
 
     @PUT
+    @RolesAllowed({"User","Adm"})
     @Path("/{id}")
     public Response update(@PathParam("id") Long id, ClienteRequestDTO clienteDTO) {
         LOG.info("Atualizando cliente com ID: " + id);
@@ -91,6 +96,7 @@ public class ClienteResource {
     }
 
     @DELETE
+    @RolesAllowed({"User","Adm"})
     @Path("/{id}")
     public Response delete(@PathParam("id") Long id) {
         LOG.info("Deletando cliente com ID: " + id);
@@ -101,6 +107,7 @@ public class ClienteResource {
     }
 
     @PATCH
+    @RolesAllowed("User")
     @Path("/{id}/upload/imagem")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     public Response uploadImage(@PathParam("id") Long id, @MultipartForm ClienteImageForm form) {
@@ -118,6 +125,7 @@ public class ClienteResource {
     }
 
     @GET
+    @RolesAllowed("User")
     @Path("/download/imagem/{nomeImagem}")
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
     public Response downloadImage(@PathParam("nomeImagem") String nomeImagem) {

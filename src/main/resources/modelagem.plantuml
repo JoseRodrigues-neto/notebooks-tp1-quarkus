@@ -1,0 +1,146 @@
+@startuml
+
+class Fabricante {
+    - nome: String
+    - paisOrigem: String
+}
+
+class Notebook {
+    - modelo: String
+    - preco: Double
+    - garantia: Integer
+}
+
+enum Cor {
+    + PRETO: int
+    + BRANCO: int
+    + CINZA: inta
+    + AZUL: int
+    + VERMELHO: int
+    + PRATA: int
+}
+
+class Especificacao {
+    - processador: String
+    - memoriaRam: String
+    - armazenamento: String
+    - tela: String
+    - bateria: String
+    - peso: Double
+}
+
+class Usuario {
+    - username: String
+    - nome: String
+    - email: String
+    - senha: String
+    - perfil: Perfil
+}
+
+class Cliente {
+    - cpf: String
+    - telefone: String
+    - endereco: String
+    - dataNascimento: LocalDate
+    - usuario: Usuario
+    - nomeImagem: String
+}
+
+class Funcionario {
+    - matricula: String
+    - cargo: String
+    - usuario: Usuario
+}
+
+class Pedido {
+    - cliente: LocalDateTime
+    - itens: List
+    - dataPedido: LocalDate   
+    - valorTotal: Double   
+    - status: StatusPedido   
+}
+
+class ItemPedido {
+    - notebook: Notebook
+    - quantidade: int
+    - preco: Double
+}
+
+enum Status {
+    - codigo: int
+    - descricao: String
+}
+
+enum Perfil {
+    - id: Integer
+    - label: String
+}
+
+abstract FormaPagamento {
+    - codigo: String
+    - valor: Double
+}
+
+class PagamentoCartao {
+    - tipo: String
+    - numeroCartao: String
+    - nomeTitular: LocalDate
+    - validade: String
+    - codigoSeguranca: String
+}
+
+class PagamentoBoleto {
+    - codigoBarras: String
+    - dataVencimento: LocalDate
+}
+
+class PagamentoPix {
+    - chavePix: String
+    - data: LocalDate
+}
+
+class Fornecedor {
+    - nome: String
+    - contato: String
+}
+
+class Categoria {
+    - nome: String
+    - descricao: String
+}
+
+class Lote {
+    - notebook: Notebook
+    - quantidade: int
+    - dataEntrada: LocalDate
+}
+
+
+' RELACIONAMENTOS
+
+Notebook "*" --> "1" Fabricante
+Notebook "*" o--> "1" Especificacao
+Notebook "*" o--> "1" Cor
+Notebook "*" o--> "1" Fornecedor
+Notebook "*" o--> "1" Categoria
+
+Lote "*" --> "1" Notebook 
+ 
+Cliente "1" --> "1" Usuario
+
+Usuario "*" --> "1" Perfil
+
+Funcionario "1" --> "1" Usuario
+
+Pedido "*" --> "1" Cliente
+Pedido "*" --> "1" Status
+Pedido "1" *---> "*" ItemPedido
+Pedido "*" --> "1" FormaPagamento
+ 
+ItemPedido "*" --> "1" Notebook
+
+FormaPagamento  <|-- PagamentoCartao
+FormaPagamento  <|-- PagamentoBoleto
+FormaPagamento  <|-- PagamentoPix
+ 
+@enduml

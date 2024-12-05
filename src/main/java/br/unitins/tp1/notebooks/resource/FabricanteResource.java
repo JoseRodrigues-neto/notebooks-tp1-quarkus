@@ -16,6 +16,7 @@ import java.util.List;
 import org.jboss.logging.Logger;
 
 @Path("/fabricantes")
+@RolesAllowed("Adm")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class FabricanteResource {
@@ -26,6 +27,7 @@ public class FabricanteResource {
     private static final Logger LOG = Logger.getLogger(FabricanteResource.class);
 
     @GET
+    
     public List<FabricanteResponseDTO> listAll() {
         LOG.info("Listando todos os fabricantes.");
         return service.listAll();

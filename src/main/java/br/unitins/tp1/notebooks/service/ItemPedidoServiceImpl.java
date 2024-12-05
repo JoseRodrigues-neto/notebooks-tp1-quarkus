@@ -25,24 +25,24 @@ public class ItemPedidoServiceImpl implements ItemPedidoService {
     NotebookRepository notebookRepository;
 
     @Inject
-    PedidoRepository pedidoRepository;  // Injetar o PedidoRepository
+    PedidoRepository pedidoRepository;  
 
     @Override
     @Transactional
     public ItemPedido create(@Valid ItemPedidoRequestDTO itemPedidoDTO) {
-        // Verificar se o ID do Notebook é válido
+      
         if (itemPedidoDTO.notebookId() == null || itemPedidoDTO.notebookId() <= 0) {
             throw new IllegalArgumentException("ID do Notebook inválido");
         }
     
-        // Encontrar o Notebook
+        
         Notebook notebook = notebookRepository.findById(itemPedidoDTO.notebookId());
         if (notebook == null) {
             throw new IllegalArgumentException("Notebook não encontrado com o ID: " + itemPedidoDTO.notebookId());
         }
     
-        // Criar um ItemPedido com o preço do notebook
-        ItemPedido itemPedido = new ItemPedido(notebook, itemPedidoDTO.quantidade(), notebook.getPreco()); // Usando o preço do notebook
+      
+        ItemPedido itemPedido = new ItemPedido(notebook, itemPedidoDTO.quantidade(), notebook.getPreco()); 
         itemPedidoRepository.persist(itemPedido);
         return itemPedido;
     }

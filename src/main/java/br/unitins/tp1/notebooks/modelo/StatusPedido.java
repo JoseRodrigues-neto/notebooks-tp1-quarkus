@@ -28,7 +28,7 @@ public enum StatusPedido {
         return descricao;
     }
 
-    // Recupera o enum com base no código
+    
     public static StatusPedido valueOf(int codigo) {
         for (StatusPedido status : StatusPedido.values()) {
             if (status.getCodigo() == codigo) {

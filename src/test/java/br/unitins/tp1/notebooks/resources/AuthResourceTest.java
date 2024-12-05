@@ -74,11 +74,11 @@ public class AuthResourceTest {
                 .when().post("/auth/login-basico")   
                 .then()
                 .statusCode(200)  
-                .header("Authorization", notNullValue()) 
-                .body(containsString("Login bem-sucedido")); 
+                .header("Authorization", notNullValue()); 
     } 
 
     @Test
+    @TestSecurity(user = "test", roles = "Adm")
     public void testLoginBasicoUsuarioNormalCredenciaisInvalidas() {
          
         UsuarioBasicoRequestDTO dto = new UsuarioBasicoRequestDTO("usuarioInexistente", "emailErrado@example.com");

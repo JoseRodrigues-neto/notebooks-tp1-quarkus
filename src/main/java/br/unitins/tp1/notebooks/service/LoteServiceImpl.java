@@ -108,20 +108,20 @@ public class LoteServiceImpl implements LoteService {
             int quantidadeLote = lote.getQuantidade();
 
             if (restante <= 0) {
-                break; // Quantidade já foi totalmente reduzida
+                break;  
             }
 
             if (quantidadeLote <= restante) {
-                // Reduzir todo o estoque do lote atual
+              
                 restante -= quantidadeLote;
                 lote.setQuantidade(0);
             } else {
-                // Reduzir parcialmente o estoque do lote
+               
                 lote.setQuantidade(quantidadeLote - restante);
                 restante = 0;
             }
 
-            loteRepository.persist(lote); // Atualiza o lote no banco
+            loteRepository.persist(lote);  
         }
 
         if (restante > 0) {

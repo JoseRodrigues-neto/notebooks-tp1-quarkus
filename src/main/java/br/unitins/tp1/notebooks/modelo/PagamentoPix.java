@@ -1,5 +1,7 @@
 package br.unitins.tp1.notebooks.modelo;
 
+import java.time.LocalDate;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.PrimaryKeyJoinColumn;
@@ -9,10 +11,10 @@ import jakarta.persistence.PrimaryKeyJoinColumn;
 public class PagamentoPix extends FormaPagamento {
 
       @Column(nullable = false)
-    private String codigoTransacao;  // Identificador único gerado para a transação PIX
+    private String chavePix;  
 
     @Column(nullable = false)
-    private String qrCode;  
+    private LocalDate data;  
 
     public PagamentoPix() {}
 
@@ -20,21 +22,20 @@ public class PagamentoPix extends FormaPagamento {
         super(valor);
     }
 
-    public String getCodigoTransacao() {
-        return codigoTransacao;
+    public String getChavePix() {
+        return chavePix;
     }
 
-    public void setCodigoTransacao(String codigoTransacao) {
-        this.codigoTransacao = codigoTransacao;
+    public void setChavePix(String codigoTransacao) {
+        this.chavePix = codigoTransacao;
     }
 
-    public String getQrCode() {
-        return qrCode;
+    public LocalDate getData() {
+        return data;
     }
 
-    public void setQrCode(String qrCode) {
-        this.qrCode = qrCode;
+    public void setData(LocalDate data) {
+        this.data = data;
     }
-   
-    
+
 }

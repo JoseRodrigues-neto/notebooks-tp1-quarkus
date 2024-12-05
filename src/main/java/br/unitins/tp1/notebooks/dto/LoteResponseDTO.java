@@ -6,14 +6,16 @@ import br.unitins.tp1.notebooks.modelo.Lote;
 
 public record LoteResponseDTO(
     Long id,        
-    NotebookResponseDTO notebook,  
+//    NotebookResponseDTO notebook,  
+    String Modelo,
     int quantidade,     
     LocalDate dataEntrada 
 ) {
         public static LoteResponseDTO valueOf(Lote lote) {
         return new LoteResponseDTO(
             lote.getId(),
-            NotebookResponseDTO.valueOf(lote.getNotebook()),
+    //        NotebookResponseDTO.valueOf(lote.getNotebook()),
+            lote.getNotebook().getModelo(),
             lote.getQuantidade(),
             lote.getDataEntrada()
         );

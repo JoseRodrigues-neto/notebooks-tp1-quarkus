@@ -31,25 +31,27 @@ public class CategoriaResource {
     public Response create(@Valid CategoriaRequestDTO dto) {
         LOG.info("criando categoria");
         Categoria categoria = categoriaService.create(dto);
-        CategoriaResponseDTO response = CategoriaResponseDTO.valueOf(categoria); 
+        CategoriaResponseDTO response = CategoriaResponseDTO.valueOf(categoria);
         return Response.status(Response.Status.CREATED).entity(response).build();
     }
 
     @PUT
+    @RolesAllowed("Adm")
     @Path("/{id}")
     public Response update(@PathParam("id") Long id, CategoriaRequestDTO dto) {
         LOG.info("atualizando categoria");
         Categoria categoria = categoriaService.update(id, dto);
-        CategoriaResponseDTO response = CategoriaResponseDTO.valueOf(categoria); 
+        CategoriaResponseDTO response = CategoriaResponseDTO.valueOf(categoria);
         return Response.ok(response).build();
     }
 
     @GET
+    @RolesAllowed("Adm")
     @Path("/{id}")
     public Response findById(@PathParam("id") Long id) {
-        LOG.info("buscando categoria com o Id: "+id);
+        LOG.info("buscando categoria com o Id: " + id);
         Categoria categoria = categoriaService.findById(id);
-    
+
         CategoriaResponseDTO response = CategoriaResponseDTO.valueOf(categoria);
         return Response.ok(response).build();
     }
@@ -64,23 +66,25 @@ public class CategoriaResource {
     @GET
     @Path("/search/{nome}")
     public Response findByNome(@PathParam("nome") String nome) {
-        LOG.info("buscando categoria com o nome: "+nome);
+        LOG.info("buscando categoria com o nome: " + nome);
         List<CategoriaResponseDTO> categorias = categoriaService.findByNome(nome);
         return Response.ok(categorias).build();
     }
 
     @DELETE
+    @RolesAllowed("Adm")
     @Path("/{id}")
     public Response delete(@PathParam("id") Long id) {
-        LOG.info("deletando categoria com o Id: "+id);
+        LOG.info("deletando categoria com o Id: " + id);
         categoriaService.delete(id);
         return Response.noContent().build();
     }
 
     @PATCH
+    @RolesAllowed("Adm")
     @Path("/{id}/descricao")
     public Response updateDescricao(@PathParam("id") Long id, @QueryParam("descricao") String descricao) {
-        LOG.info("atualizando categoria com o Id: "+id);
+        LOG.info("atualizando categoria com o Id: " + id);
         Categoria categoria = categoriaService.updateDescricao(id, descricao);
         CategoriaResponseDTO response = CategoriaResponseDTO.valueOf(categoria);
         return Response.ok(response).build();

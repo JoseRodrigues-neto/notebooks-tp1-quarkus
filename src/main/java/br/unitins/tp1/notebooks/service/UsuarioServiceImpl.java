@@ -29,7 +29,7 @@ public class UsuarioServiceImpl implements UsuarioService {
     JsonWebToken jwt;
 
     @Inject
-    HashService hash;
+    HashService hash; 
 
     @Inject
     Logger logger;
@@ -57,7 +57,7 @@ public class UsuarioServiceImpl implements UsuarioService {
         if (usuario == null) {
             throw new RuntimeException("Usuário não encontrado.");
         }
-        return usuario; // Retorna o objeto `Usuario`, conforme a interface
+        return usuario;  
     }
 
     @Override
@@ -75,26 +75,25 @@ public class UsuarioServiceImpl implements UsuarioService {
         String usernameAutenticado = jwt.getName();
 
         if (!alteraSenhaDTO.userName().equals(usernameAutenticado)) {
-            throw new IllegalStateException("Usuário autenticado não corresponde ao username fornecido.");
+            throw new ValidationException("Usuario","usuario não autenticado");
         }
 
-        // Busca o usuário no banco de dados
+        
         Usuario usuario = usuarioRepository.findByUsername(alteraSenhaDTO.userName());
         if (usuario == null) {
-            throw new NotFoundException("Usuário não encontrado.");
+            throw new ValidationException("userName","Usuario username não existe");
         }
 
-        // Verifica se a senha antiga está correta
+       
         if (!hash.getHashSenha(alteraSenhaDTO.senhaAntiga()).equals(usuario.getSenha())) {
-            throw new IllegalArgumentException("A senha antiga está incorreta.");
+            throw new ValidationException("SenhaAntiga","senha incorreta");
         }
 
-        // Atualiza a senha com o hash da nova senha
         String senhaNovaHash = hash.getHashSenha(alteraSenhaDTO.senhaNova());
 
         usuario.setSenha(senhaNovaHash);
 
-        // Salva a alteração no banco
+    
         usuarioRepository.persist(usuario);
 
         return usuario;
@@ -103,14 +102,14 @@ public class UsuarioServiceImpl implements UsuarioService {
     @Override
     @Transactional
     public Usuario alteraUsername(AlteraUserNameDTO alteraUsernameDTO) {
-        // Recupera o nome de usuário autenticado a partir do JWT
+ 
         String usernameAutenticado = jwt.getName();
 
         if (usernameAutenticado == null) {
             throw new IllegalStateException("Usuário autenticado não encontrado.");
         }
 
-        // Busca o usuário autenticado no banco de dados
+      
         Usuario usuario = usuarioRepository.findByUsername(usernameAutenticado);
         if (usuario == null) {
             throw new NotFoundException("Usuário não encontrado.");
@@ -120,42 +119,39 @@ public class UsuarioServiceImpl implements UsuarioService {
             throw new IllegalArgumentException("A senha incorreta.");
         }
 
-        // Verifica se o novo username já está em uso no banco de dados
         Usuario usuarioExistente = usuarioRepository.findByUsername(alteraUsernameDTO.novoUserName());
         if (usuarioExistente != null) {
             throw new IllegalArgumentException("O nome de usuário já está em uso.");
         }
 
-        // Atualiza o username do usuário autenticado
         usuario.setUsername(alteraUsernameDTO.novoUserName());
 
-        // Persiste a alteração no banco
+     
         usuarioRepository.persist(usuario);
 
-        // Retorna o usuário atualizado
+       
         return usuario;
     }
 
     @Transactional
     public void alteraEmail(String novoEmail) {
-        // Recupera o nome de usuário autenticado a partir do JWT
+        
         String usernameAutenticado = jwt.getName();
 
         if (usernameAutenticado == null) {
             throw new IllegalStateException("Usuário autenticado não encontrado.");
         }
-
-        // Busca o usuário no banco de dados
+ 
         Usuario usuario = usuarioRepository.findByUsername(usernameAutenticado);
         if (usuario == null) {
             throw new NotFoundException("Usuário não encontrado.");
         }
 
-        // Atualiza o email do usuário
+     
         usuario.setEmail(novoEmail);
         usuarioRepository.persist(usuario);
 
-        // Não há necessidade de retornar nada
+ 
     }
 
     @Override
@@ -163,13 +159,11 @@ public class UsuarioServiceImpl implements UsuarioService {
     public void AlteraNome(String novoNome) {
 
         String usernameAutenticado = jwt.getName();
-        // Buscar o cliente pelo id
+       
         Usuario usuario = usuarioRepository.findByUsername(usernameAutenticado);
         if (usuario != null) {
 
             usuario.setNome(novoNome);
-
-            // Persistir as alterações no banco de dados
             usuarioRepository.persist(usuario);
         } else {
             throw new NotFoundException("Cliente não encontrado.");

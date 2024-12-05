@@ -2,6 +2,7 @@ package br.unitins.tp1.notebooks.resource;
 
 import br.unitins.tp1.notebooks.dto.PedidoRequestDTO;
 import br.unitins.tp1.notebooks.dto.PedidoResponseDTO;
+import br.unitins.tp1.notebooks.dto.PedidoResponseExpandidoDTO;
 import br.unitins.tp1.notebooks.modelo.Pedido;
 
 import br.unitins.tp1.notebooks.service.PedidoService;
@@ -25,72 +26,82 @@ public class PedidoResource {
     @Inject
     PedidoService pedidoService;
 
-    private static final Logger LOGGER = Logger.getLogger(PedidoResource.class);
+    private static final Logger LOG = Logger.getLogger(PedidoResource.class);
 
     @POST
     @RolesAllowed("User")
     public Response create(PedidoRequestDTO pedidoDTO) {
-        try {
+       LOG.info("criando pedido");
             Pedido pedido = pedidoService.create(pedidoDTO);
             return Response.status(Response.Status.CREATED)
                     .entity(PedidoResponseDTO.valueOf(pedido))
-                    .build();
-        } catch (IllegalArgumentException e) {
-            return Response.status(Response.Status.BAD_REQUEST)
-                    .entity(Map.of("erro", e.getMessage()))
-                    .build();
-        }
+                    .build();  
     }
 
     @GET
+    @RolesAllowed("Adm")
     @Path("/{id}")
     public Response findById(@PathParam("id") Long id) {
-        try {
+        LOG.info("buscando por pedido com o Id: "+ id);
             Pedido pedido = pedidoService.findById(id);
             return Response.ok(PedidoResponseDTO.valueOf(pedido))
                     .build();
-        } catch (NotFoundException e) {
-            return Response.status(Response.Status.NOT_FOUND)
-                    .entity(Map.of("erro", e.getMessage()))
+      
+    }
+
+    @GET
+    @RolesAllowed("User")
+    @Path("/pedido-detalhado/{id}")
+    public Response findByIdPedidoDetalhado(@PathParam("id") Long id) {
+        LOG.info("buscando por pedido com o Id: "+ id);
+            Pedido pedido = pedidoService.findById(id);
+            return Response.ok(PedidoResponseExpandidoDTO.valueOf(pedido))
                     .build();
-        }
+      
     }
 
     @PATCH
+    @RolesAllowed("Adm")
     @Path("/{id}/status")
     public Response atualizarStatusPedido(@PathParam("id") Long pedidoId, @QueryParam("statusId") Long statusId) {
-        try {
+        LOG.info("Atualizando estatos do pedido com o Id: "+ pedidoId);
             Pedido pedidoAtualizado = pedidoService.alterarStatusPedido(pedidoId, statusId);
             return Response.ok(Map.of(
                     "mensagem", "Status do pedido atualizado com sucesso.",
                     "statusPedido", pedidoAtualizado.getStatus().getDescricao())).build();
-        } catch (IllegalArgumentException e) {
-            return Response.status(Response.Status.BAD_REQUEST)
-                    .entity(Map.of("erro", e.getMessage()))
-                    .build();
-        } catch (NotFoundException e) {
-            return Response.status(Response.Status.NOT_FOUND)
-                    .entity(Map.of("erro", e.getMessage()))
-                    .build();
-        }
+   
     }
 
     @GET
+    @RolesAllowed("Adm")
     public List<PedidoResponseDTO> listAll() {
+        LOG.info("buscando todos os pedidos");
         return pedidoService.listAll()
                 .stream()
                 .map(PedidoResponseDTO::valueOf)
                 .collect(Collectors.toList());
-    }
+    }  
 
+ 
     @GET
     @Path("/search/meu")
     @RolesAllowed("User")
     @Produces("application/json")
     public Response findMyPedidos() {
-        LOGGER.info("Finding my pedidos");
+        LOG.info("buscando por meus pedidos");
 
         return Response.ok(pedidoService.findMyPedidos()).build();
     }
+
+    @PUT
+@Path("/cancelar/{id}")
+@RolesAllowed("User")
+@Produces(MediaType.APPLICATION_JSON)
+public Response cancelarPedido(@PathParam("id") Long pedidoId) {
+    LOG.info("Cancelando pedido com o Id: "+ pedidoId);
+    Pedido pedidoCancelado = pedidoService.cancelarPedido(pedidoId);
+    return Response.ok("Pedido com o Id: "+ pedidoId + ", Status: "+pedidoCancelado.getStatus()).build();
+}
+
 
 }

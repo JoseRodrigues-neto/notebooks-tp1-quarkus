@@ -31,17 +31,44 @@ public class NotebookServiceImpl implements NotebookService {
     @Inject
     CategoriaRepository categoriaRepository;
 
+    @Inject
+    LoteRepository loteRepository;
+
     @Override
     @Transactional
     public Notebook create(@Valid NotebookRequestDTO notebookRequestDTO) {
+
         Notebook notebook = new Notebook();
         notebook.setModelo(notebookRequestDTO.modelo());
         notebook.setPreco(notebookRequestDTO.preco());
         notebook.setGarantia(notebookRequestDTO.garantia());
         notebook.setFabricante(fabricanteRepository.findById(notebookRequestDTO.fabricanteId()));
         notebook.setEspecificacao(especificacaoRepository.findById(notebookRequestDTO.especificacaoId()));
-        notebook.setCor(Cor.valueOf(notebookRequestDTO.cor().toUpperCase()));
         notebook.setCategoria(categoriaRepository.findById(notebookRequestDTO.categoriaId()));
+
+        try {
+            notebook.setCor(Cor.valueOf(notebookRequestDTO.cor().toUpperCase()));
+        } catch (IllegalArgumentException e) {
+            throw new ValidationException("cor", "Valor inválido para a cor");
+        }
+
+        if(notebook.getFabricante() == null){
+            throw new ValidationException("fabricante", "ID invalida");   
+        }
+
+        if(notebook.getEspecificacao()== null){
+            throw new ValidationException("Especificacao", "ID invalida");   
+        }
+
+        if(notebook.getCategoria() == null){
+            throw new ValidationException("Categoria", "ID invalida");   
+        }
+
+        try {
+            notebook.setCor(Cor.valueOf(notebookRequestDTO.cor().toUpperCase()));
+        } catch (IllegalArgumentException e) {
+            throw new ValidationException("cor", "Valor inválido para a cor");
+        }
 
         notebookRepository.persist(notebook);
         return notebook;
@@ -49,32 +76,51 @@ public class NotebookServiceImpl implements NotebookService {
 
     @Override
     @Transactional
-    public Notebook update(Long id,@Valid NotebookRequestDTO dto) {
+    public Notebook update(Long id,@Valid NotebookRequestDTO notebookRequestDTO) {
         validarId(id);
         Notebook notebook = notebookRepository.findByIdOptional(id)
                 .orElseThrow(() -> new IllegalArgumentException("Notebook não encontrado para o ID fornecido."));
 
-        notebook.setModelo(dto.modelo());
-        notebook.setPreco(dto.preco());
-        notebook.setGarantia(dto.garantia());
-        notebook.setFabricante(fabricanteRepository.findById(dto.fabricanteId()));
-        notebook.setEspecificacao(especificacaoRepository.findById(dto.especificacaoId()));
-        notebook.setCor(Cor.valueOf(dto.cor().toUpperCase()));
-        notebook.setCategoria(categoriaRepository.findById(dto.categoriaId()));
+        notebook.setModelo(notebookRequestDTO.modelo());
+        notebook.setPreco(notebookRequestDTO.preco());
+        notebook.setGarantia(notebookRequestDTO.garantia());
+        notebook.setFabricante(fabricanteRepository.findById(notebookRequestDTO.fabricanteId()));
+        notebook.setEspecificacao(especificacaoRepository.findById(notebookRequestDTO.especificacaoId()));
+         notebook.setCategoria(categoriaRepository.findById(notebookRequestDTO.categoriaId()));
 
-        return notebook; // Retorna o notebook atualizado
+        try {
+            notebook.setCor(Cor.valueOf(notebookRequestDTO.cor().toUpperCase()));
+        } catch (IllegalArgumentException e) {
+            throw new ValidationException("cor", "Valor inválido para a cor");
+        }
+
+        if(notebook.getFabricante() == null){
+            throw new ValidationException("fabricante", "ID invalida");   
+        }
+
+        if(notebook.getEspecificacao()== null){
+            throw new ValidationException("Especificacao", "ID invalida");   
+        }
+
+        if(notebook.getCategoria() == null){
+            throw new ValidationException("Categoria", "ID invalida");   
+        }
+
+        return notebook;  
     }
 
     @Override
     @Transactional
     public void delete(Long id) {
         validarId(id);
-        Notebook notebook = notebookRepository.findById(id);
-        if (notebook != null) {
-            notebookRepository.delete(notebook);
-        } else {
-            throw new IllegalArgumentException("Notebook não encontrado para o ID fornecido.");
+        boolean hasAssociatedLote = loteRepository.existeNotebookId(id);
+
+        if (hasAssociatedLote) {
+            throw new ValidationException("Lote","Não é possível deletar o notebook pois ele está associado a um lote.");
         }
+        Notebook notebook = notebookRepository.findById(id);
+        notebookRepository.delete(notebook);
+        
     }
 
     @Override
@@ -134,7 +180,7 @@ public class NotebookServiceImpl implements NotebookService {
         }
         Notebook notebook = notebookRepository.findById(id);
         notebook.setGarantia(garantia);
-        return notebook;
+        return notebook; 
     }
 
     private void validarId(long id) {
@@ -144,9 +190,9 @@ public class NotebookServiceImpl implements NotebookService {
     }
 
     private void validarModelo(String modelo) {
-        Notebook notebook = notebookRepository.findByModeloUnico(modelo);
+        List<Notebook> notebook = notebookRepository.findByModelo(modelo);
         if (notebook == null)
-            throw new ValidationException("id", "Notebook com o ID fornecido não encontrado.");
+            throw new ValidationException("Modelo", "Notebook com o modelo fornecido não encontrado.");
     }
 
 }

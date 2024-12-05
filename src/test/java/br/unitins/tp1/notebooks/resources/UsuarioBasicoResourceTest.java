@@ -22,7 +22,7 @@ public class UsuarioBasicoResourceTest {
     UsuarioBasicRepository usuarioBasicoRepository;
 
     @Test
-    @TestSecurity(user = "test", roles = "Admin")
+    @TestSecurity(user = "test", roles = "Adm")
     public void testCreateUsuarioBasico() {
     
         UsuarioBasicoRequestDTO dto = new UsuarioBasicoRequestDTO(

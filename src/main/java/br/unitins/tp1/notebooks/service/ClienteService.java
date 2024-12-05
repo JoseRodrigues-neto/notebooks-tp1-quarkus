@@ -19,6 +19,7 @@ public interface ClienteService {
     Cliente atualizarEndereco(String novoEndereco);
     Cliente atualizarTelefone(String novoTelefone);
     ClienteResponseDTO findByMim();
+    void deleteTest(Long id);
   
 }
  

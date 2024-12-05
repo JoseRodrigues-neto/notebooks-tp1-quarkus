@@ -2,20 +2,11 @@ package br.unitins.tp1.notebooks.resource;
 
 import br.unitins.tp1.notebooks.service.PagamentoService;
 import br.unitins.tp1.notebooks.service.PedidoService;
-import br.unitins.tp1.notebooks.modelo.Pedido;
 import br.unitins.tp1.notebooks.dto.CartaoDTO;
-import br.unitins.tp1.notebooks.modelo.FormaPagamento;
-import br.unitins.tp1.notebooks.modelo.PagamentoBoleto;
-import br.unitins.tp1.notebooks.modelo.PagamentoCartao;
-import br.unitins.tp1.notebooks.modelo.PagamentoPix;
-
-import java.time.YearMonth;
-import java.util.Map;
-
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.Response;
-import jakarta.ws.rs.core.MediaType;
 
 @Path("/pagamentos")
 public class PagamentoResource {
@@ -30,11 +21,10 @@ public class PagamentoResource {
     @Path("/cadastra-cartao")
     @Consumes("application/json")
     @Produces("application/json")
+    @RolesAllowed("User")
     public Response cadastraCartao(CartaoDTO pagamentoCartaoDTO) {
-        // Chama o serviço para processar o pagamento
-        pagamentoService.cadastraCartao(pagamentoCartaoDTO);
 
-        // Retorna uma resposta de sucesso
+        pagamentoService.cadastraCartao(pagamentoCartaoDTO);
         return Response.ok().build();
     }
 
@@ -42,6 +32,7 @@ public class PagamentoResource {
     @Path("/pagamento-cartao/{pedidoId}")
     @Consumes("application/json")
     @Produces("application/json")
+    @RolesAllowed("User")
     public Response processarPagamentoCartao(@PathParam("pedidoId") Long pedidoId) {
         pagamentoService.pagamentoCartao(pedidoId);
         return Response.ok().build();
@@ -51,6 +42,7 @@ public class PagamentoResource {
     @Path("/pagamento-pix/{pedidoId}")
     @Consumes("application/json")
     @Produces("application/json")
+    @RolesAllowed("User")
     public Response processarPagamentoPix(@PathParam("pedidoId") Long pedidoId) {
         pagamentoService.pagamentoPix(pedidoId);
         return Response.ok().build();
@@ -60,6 +52,7 @@ public class PagamentoResource {
     @Path("/pagamento-boleto/{pedidoId}")
     @Consumes("application/json")
     @Produces("application/json")
+    @RolesAllowed("User")
     public Response processarPagamentoBoleto(@PathParam("pedidoId") Long pedidoId) {
         pagamentoService.pagamentoBoleto(pedidoId);
         return Response.ok().build();

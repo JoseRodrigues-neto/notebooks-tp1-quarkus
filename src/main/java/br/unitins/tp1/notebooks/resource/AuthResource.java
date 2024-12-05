@@ -66,13 +66,14 @@ public class AuthResource {
     @Path("login-basico")
     @Consumes("application/json")
     @Produces("application/json")
-    public Response login(UsuarioBasicoRequestDTO usuarioBasicoRequestDTO) {
+    public Response loginBasico(UsuarioBasicoRequestDTO usuarioBasicoRequestDTO) {
         LOG.info("loggin no sistema" + usuarioBasicoRequestDTO.nome());
         String jwtToken = usuarioBasicoService.login(usuarioBasicoRequestDTO); 
   
         if (jwtToken != null) {
             return Response.ok("Login bem-sucedido")
                     .header("Authorization", "Bearer " + jwtToken)
+                    .entity(usuarioBasicoRequestDTO)
                     .build();
         }
 

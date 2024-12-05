@@ -20,22 +20,26 @@ public class LoteResource {
 
     @Inject
     private LoteService loteService;
-   
+
     private static final Logger LOG = Logger.getLogger(LoteResource.class);
+
     @GET
+    @RolesAllowed("Adm")
     public List<LoteResponseDTO> listAll() {
         LOG.info("Listando todos os lotes.");
         return loteService.findAll();
     }
 
     @GET
+    @RolesAllowed("Adm")
     @Path("/{id}")
     public LoteResponseDTO findById(@PathParam("id") Long id) {
-        LOG.info("Buscando lote com ID: %d"+ id);
+        LOG.info("Buscando lote com ID: %d" + id);
         return LoteResponseDTO.valueOf(loteService.findById(id));
     }
- 
+
     @POST
+    @RolesAllowed("Adm")
     public Response create(@Valid LoteRequestDTO dto) {
         LOG.info("Criando um novo lote.");
         LoteResponseDTO createdLote = LoteResponseDTO.valueOf(loteService.create(dto));
@@ -43,25 +47,28 @@ public class LoteResource {
     }
 
     @PUT
+    @RolesAllowed("Adm")
     @Path("/{id}")
     public Response update(@PathParam("id") Long id, @Valid LoteRequestDTO dto) {
-        LOG.info("Atualizando lote com ID: %d"+ id);
+        LOG.info("Atualizando lote com ID: %d" + id);
         LoteResponseDTO updatedLote = LoteResponseDTO.valueOf(loteService.update(id, dto));
         return Response.ok(updatedLote).build();
     }
 
     @PATCH
-@Path("/{id}/quantidade")
-public Response updateQuantity(@PathParam("id") Long id, @QueryParam("quantidade") int quantidade) {
-    LOG.info("Atualizando quantidade do lote com ID:"+ id);
-    LoteResponseDTO updatedLote = LoteResponseDTO.valueOf(loteService.atualizarQuantidade(id, quantidade));
-    return Response.ok(updatedLote).build();
-}
+    @RolesAllowed("Adm")
+    @Path("/{id}/quantidade")
+    public Response updateQuantity(@PathParam("id") Long id, @QueryParam("quantidade") int quantidade) {
+        LOG.info("Atualizando quantidade do lote com ID:" + id);
+        LoteResponseDTO updatedLote = LoteResponseDTO.valueOf(loteService.atualizarQuantidade(id, quantidade));
+        return Response.ok(updatedLote).build();
+    }
 
     @DELETE
+    @RolesAllowed("Adm")
     @Path("/{id}")
     public Response delete(@PathParam("id") Long id) {
-        LOG.info("Deletando lote com ID: "+ id);
+        LOG.info("Deletando lote com ID: " + id);
         loteService.delete(id);
         return Response.noContent().build();
     }

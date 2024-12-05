@@ -34,12 +34,14 @@ public class FuncionarioResource {
     private static final Logger LOG = Logger.getLogger(FuncionarioResource.class);
 
     @GET
+    @RolesAllowed("Adm")
     public List<FuncionarioResponseDTO> listAll() {
         LOG.info("Listando todos os funcionários.");
         return funcionarioService.listAll();
     }
 
     @GET
+    @RolesAllowed("Adm")
     @Path("/search/{nome}")
     public List<FuncionarioResponseDTO> findByName(@PathParam("nome") String nome) {
         LOG.info("Buscando funcionários com o nome: " + nome);
@@ -47,6 +49,7 @@ public class FuncionarioResource {
     }
 
     @GET
+    @RolesAllowed("Adm")
     @Path("/{id}")
     public Response findById(@PathParam("id") Long id) {
         LOG.info("Buscando funcionário com ID: " + id);
@@ -55,6 +58,7 @@ public class FuncionarioResource {
     }
 
     @POST
+    @RolesAllowed("Adm")
     public Response create(@Valid FuncionarioRequestDTO funcionarioDTO) {
         LOG.info("Foi criado um novo funcionário.");
         Funcionario funcionario = funcionarioService.create(funcionarioDTO);
@@ -64,6 +68,7 @@ public class FuncionarioResource {
     }
 
     @PUT
+    @RolesAllowed("Adm")
     @Path("/{id}")
     public Response update(@PathParam("id") Long id, FuncionarioRequestDTO funcionarioDTO) {
         LOG.info("Atualizando funcionário com ID: " + id);
@@ -75,6 +80,7 @@ public class FuncionarioResource {
     }
 
     @DELETE
+    @RolesAllowed("Adm")
     @Path("/{id}")
     public Response delete(@PathParam("id") Long id) {
         LOG.info("Excluindo funcionário com ID: " + id);
