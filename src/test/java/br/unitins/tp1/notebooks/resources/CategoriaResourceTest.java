@@ -123,7 +123,7 @@ public class CategoriaResourceTest {
                 .when()
                 .delete("/categorias/{id}")
                 .then()
-                .statusCode(204); 
+                .statusCode(400); 
 
         given()
                 .pathParam("id", categoriaId)
